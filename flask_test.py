@@ -1,25 +1,17 @@
-from flask import Flask
-
-from pybaseball import playerid_lookup
-from pybaseball import statcast_pitcher
-
+from flask import Flask, jsonify
+import mlb_metrics_helpers
 
 app = Flask(__name__)
 
 
-@app.route("/")
-def hello_world():
-    return "<p>Hello, World!</p>"
-
-
-def test_pitcher_stats():
-    playerid = playerid_lookup("kershaw", "clayton")["key_mlbam"][0]
-    kershaw_stats = statcast_pitcher("2017-06-01", "2017-07-01", playerid)
-    grouped = kershaw_stats.groupby("pitch_type").release_speed.agg("mean")
-    print(kershaw_stats.columns)
+@app.route("/api/v1/player-id/<last_name>/<first_name>", methods=["GET"])
+def get_player_id(last_name, first_name):
+    try:
+        player_id = mlb_metrics_helpers.player_id(last_name, first_name)
+        return jsonify({"player_id": int(player_id)}), 200
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 404
 
 
 if __name__ == "__main__":
-    # app.run(host="0.0.0.0", port=105)
-
-    test_pitcher_stats()
+    app.run(debug=True)  # Turn on debug mode for development
