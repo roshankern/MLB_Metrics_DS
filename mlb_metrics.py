@@ -9,6 +9,7 @@ import pandas as pd
 def player_id(last_name: str, first_name: str, player_num: int = 0) -> int:
     """
     Finds the player ID based on the player's last name and first name.
+    Uses pybaseball's playerid_lookup function.
 
     Args:
         last_name (str): The last name of the player.
@@ -35,6 +36,7 @@ def player_general_metrics(
 ) -> dict:
     """
     Retrieves the general metrics for a player based on their ID.
+    Uses MLB-StatsAPI's player_stat_data function.
 
     Args:
         player_id (int): The ID of the player.
@@ -54,7 +56,7 @@ def parse_career_timeline(player_metrics: dict) -> tuple[str, str]:
 
 
     Args:
-        player_metrics (dict): A dictionary containing the player's metrics.
+        player_metrics (dict): A dictionary containing the player's metrics from MLB-StatsAPI.
 
     Returns:
         tuple[str, str]: A tuple with the start and end dates of the player's career.
@@ -75,6 +77,7 @@ def player_specific_metrics(
     """
     Retrieves the specific metrics for a player based on their ID, metric type, and date range.
     Only works for pitcher and batter metrics.
+    Uses pybaseball's statcast_pitcher and statcast_batter functions.
 
     Args:
         player_id (int): The ID of the player.
@@ -96,12 +99,14 @@ def player_specific_metrics(
         raise ValueError("Invalid metric_type. Must be either 'pitching' or 'batting'.")
 
 
-def plate_crossing_metrics(player_specific_metrics: pd.DataFrame) -> pd.DataFrame:
+def plate_crossing_metrics(
+    player_specific_metrics: pd.DataFrame,
+) -> pd.DataFrame:
     """
     Retrieves the plate crossing metrics for a specific player.
 
     Parameters:
-        player_specific_metrics (pd.DataFrame): DataFrame containing player-specific metrics.
+        player_specific_metrics (pd.DataFrame): DataFrame containing player-specific metrics from pybaseball statcast API.
 
     Returns:
         pd.DataFrame: DataFrame containing plate crossing metrics for the player.
