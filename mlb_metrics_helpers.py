@@ -6,6 +6,9 @@ import statsapi
 import pandas as pd
 
 
+from sklearn.model_selection import train_test_split
+
+
 def player_id(last_name: str, first_name: str, player_num: int = 0) -> int:
     """
     Finds the player ID based on the player's last name and first name.
@@ -99,19 +102,75 @@ def parse_career_timeline(player_metrics: dict) -> tuple[str, str]:
     return (start_dt, end_dt)
 
 
-def plate_crossing_metrics(
-    player_specific_metrics: pd.DataFrame,
-) -> pd.DataFrame:
+def batter_model_metrics(player_specific_metrics: pd.DataFrame) -> pd.DataFrame:
     """
-    Retrieves the plate crossing metrics for a specific player.
+    Processes player-specific metrics for model training.
 
     Parameters:
-        player_specific_metrics (pd.DataFrame): DataFrame containing player-specific metrics from pybaseball statcast API.
+        player_specific_metrics (pd.DataFrame): DataFrame containing player-specific metrics.
 
     Returns:
-        pd.DataFrame: DataFrame containing plate crossing metrics for the player.
+        pd.DataFrame: DataFrame prepared for batter model training (predict result of swing).
     """
-    return player_specific_metrics[
-        ~player_specific_metrics["plate_x"].isna()
-        & ~player_specific_metrics["plate_z"].isna()
+    # columns to use as features and classes
+    col_to_keep = [
+        "pitch_type",
+        "release_speed",
+        "release_pos_x",
+        "release_pos_y",
+        "release_spin_rate",
+        "spin_axis",
+        "p_throws",
+        "plate_x",
+        "plate_z",
+        "vx0",
+        "vy0",
+        "vz0",
+        "ax",
+        "ay",
+        "az",
+        "description",
     ]
+
+    # Select only the relevant columns
+    model_data = player_specific_metrics[col_to_keep]
+    model_data = model_data[
+        (model_data["description"] == "hit_into_play")
+        | (model_data["description"] == "swinging_strike")
+    ]
+
+    # Drop rows with missing values
+    model_data.dropna(inplace=True)
+
+    return model_data
+
+
+def batter_model_datasets(
+    model_data: pd.DataFrame,
+) -> tuple[pd.DataFrame, pd.DataFrame, pd.Series, pd.Series]:
+    """
+    Splits the model data into training and testing datasets.
+
+    Parameters:
+        model_data (pd.DataFrame): DataFrame containing model data.
+
+    Returns:
+        tuple[pd.DataFrame, pd.DataFrame, pd.Series, pd.Series]: A tuple containing the training and testing datasets.
+            - X_train (pd.DataFrame): Training feature dataset.
+            - X_test (pd.DataFrame): Testing feature dataset.
+            - y_train (pd.Series): Training class dataset.
+            - y_test (pd.Series): Testing class dataset.
+    """
+    # metric we want to predict (swing result)
+    target = "description"
+
+    # Split into feature and class datasets
+    X = model_data.drop(columns=[target])
+    y = model_data[target]
+
+    # Split into training and testing datasets
+    X_train, X_test, y_train, y_test = train_test_split(
+        X, y, random_state=0, test_size=0.1, stratify=target
+    )
+
+    return (X_train, X_test, y_train, y_test)
