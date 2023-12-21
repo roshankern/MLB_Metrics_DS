@@ -10,7 +10,7 @@ Right now this project includes simple functions for:
 - Get player specific metrics
 
 The functions are defined in [mlb_metrics_helpers.py](mlb_metrics_helpers.py) and used for the Flask backend in [flask_backend.py](flask_backend.py).
-Examples for 
+Examples for using Python functions are included in [helpers_example.ipynb](helpers_example.ipynb).
 
 Future additions to this project include:
 
