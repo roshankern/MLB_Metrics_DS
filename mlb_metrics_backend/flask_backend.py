@@ -40,6 +40,29 @@ def get_player_general_metrics():
         return jsonify({"error": str(e)}), 404
 
 
+@app.route("/api/v1/player-career-timeline", methods=["GET"])
+def get_player_career_timeline():
+    player_id = request.args.get("player_id")
+
+    if not player_id:
+        return jsonify({"error": "Missing player ID"}), 400
+
+    try:
+        player_id = int(player_id)  # Convert to integer
+        player_metrics = mlb_metrics_helpers.player_general_metrics(player_id)
+        career_timeline = mlb_metrics_helpers.parse_career_timeline(player_metrics)
+
+        return (
+            jsonify(
+                {"mlb_debut": career_timeline[0], "last_played": career_timeline[1]}
+            ),
+            200,
+        )
+
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 404
+
+
 @app.route("/api/v1/player-specific-metrics", methods=["GET"])
 def get_player_specific_metrics():
     player_id = request.args.get("player_id")
@@ -60,29 +83,6 @@ def get_player_specific_metrics():
         # Convert DataFrame to JSON
         metrics_json = metrics_df.to_json(orient="records", date_format="iso")
         return metrics_json, 200
-
-    except ValueError as e:
-        return jsonify({"error": str(e)}), 404
-
-
-@app.route("/api/v1/player-career-timeline", methods=["GET"])
-def get_player_career_timeline():
-    player_id = request.args.get("player_id")
-
-    if not player_id:
-        return jsonify({"error": "Missing player ID"}), 400
-
-    try:
-        player_id = int(player_id)  # Convert to integer
-        player_metrics = mlb_metrics_helpers.player_general_metrics(player_id)
-        career_timeline = mlb_metrics_helpers.parse_career_timeline(player_metrics)
-
-        return (
-            jsonify(
-                {"mlb_debut": career_timeline[0], "last_played": career_timeline[1]}
-            ),
-            200,
-        )
 
     except ValueError as e:
         return jsonify({"error": str(e)}), 404
