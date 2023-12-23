@@ -1,4 +1,5 @@
 from flask import Flask, jsonify, request
+import pandas as pd
 import mlb_metrics_helpers
 
 app = Flask(__name__)
@@ -81,6 +82,27 @@ def get_player_career_timeline():
 
     except ValueError as e:
         return jsonify({"error": str(e)}), 404
+
+
+@app.route("/api/v1/pitcher-model-data", methods=["POST"])
+def pitcher_model_data():
+    try:
+        # Retrieve JSON data from the request
+        json_data = request.json
+
+        # Convert JSON to DataFrame
+        player_specific_metrics = pd.DataFrame(json_data)
+
+        # Process the data using the pitcher_model_data function
+        processed_data = mlb_metrics_helpers.pitcher_model_data(player_specific_metrics)
+
+        # Convert processed data back to JSON
+        processed_json = processed_data.to_json(orient="records", date_format="iso")
+
+        return processed_json, 200
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
 
 
 if __name__ == "__main__":
