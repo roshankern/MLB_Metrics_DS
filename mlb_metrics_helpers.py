@@ -111,7 +111,44 @@ def parse_career_timeline(player_metrics: dict) -> tuple[str, str]:
     return (start_dt, end_dt)
 
 
-def batter_model_metrics(player_specific_metrics: pd.DataFrame) -> pd.DataFrame:
+def pitcher_model_data(player_specific_metrics: pd.DataFrame) -> pd.DataFrame:
+    """
+    Processes player-specific metrics for model training.
+
+    Parameters:
+        player_specific_metrics (pd.DataFrame): DataFrame containing player-specific metrics.
+
+    Returns:
+        pd.DataFrame: DataFrame prepared for pitcher model training (predict zone for throw).
+    """
+    # columns to use as features and classes
+    col_to_keep = [
+        "pitch_type",
+        "release_speed",
+        "release_pos_x",
+        "release_pos_y",
+        "release_spin_rate",
+        "spin_axis",
+        "p_throws",
+        "vx0",
+        "vy0",
+        "vz0",
+        "ax",
+        "ay",
+        "az",
+        "zone",
+    ]
+
+    # Select only the relevant target columns
+    pitcher_model_data = player_specific_metrics[col_to_keep]
+
+    # Drop rows with missing values
+    pitcher_model_data.dropna(inplace=True)
+
+    return pitcher_model_data
+
+
+def batter_model_data(player_specific_metrics: pd.DataFrame) -> pd.DataFrame:
     """
     Processes player-specific metrics for model training.
 
@@ -154,14 +191,15 @@ def batter_model_metrics(player_specific_metrics: pd.DataFrame) -> pd.DataFrame:
     return batter_model_data
 
 
-def batter_model_datasets(
-    model_data: pd.DataFrame,
+def model_datasets(
+    model_data: pd.DataFrame, target: str
 ) -> tuple[pd.DataFrame, pd.DataFrame, pd.Series, pd.Series]:
     """
     Splits the model data into training and testing datasets.
 
     Parameters:
         model_data (pd.DataFrame): DataFrame containing model data.
+        target (str): The target column to predict.
 
     Returns:
         tuple[pd.DataFrame, pd.DataFrame, pd.Series, pd.Series]: A tuple containing the training and testing datasets.
@@ -170,8 +208,6 @@ def batter_model_datasets(
             - y_train (pd.Series): Training class dataset.
             - y_test (pd.Series): Testing class dataset.
     """
-    # metric we want to predict (swing result)
-    target = "description"
 
     # Split into feature and class datasets
     X = model_data.drop(columns=[target])
@@ -185,11 +221,11 @@ def batter_model_datasets(
     return (X_train, X_test, y_train, y_test)
 
 
-def trained_batter_model(
+def trained_model(
     X_train: pd.DataFrame, y_train: pd.Series, sklearn_model: object
 ) -> object:
     """
-    Trains a batter model using the provided training data.
+    Trains a baseball model using the provided training data.
 
     Parameters:
         X_train (pd.DataFrame): Training feature dataset.
@@ -224,8 +260,9 @@ def trained_batter_model(
     return model
 
 
-def tested_batter_model(
-    batter_model_data: pd.DataFrame,
+def tested_model(
+    model_data: pd.DataFrame,
+    target: str,
     sklearn_model_type: Literal[
         "logistic_regression",
         "random_forest",
@@ -234,10 +271,11 @@ def tested_batter_model(
     ],
 ) -> tuple[object, float]:
     """
-    Trains and evaluates a batter model using the specified sklearn model type.
+    Trains and evaluates a player model using the specified sklearn model type.
 
     Args:
-        batter_model_data (pd.DataFrame): The input data for training the model.
+        model_data (pd.DataFrame): The input data for training the model.
+        target (str): The target column to predict.
         sklearn_model_type (Literal): The type of sklearn model to use. Must be one of:
             - "logistic_regression"
             - "random_forest"
@@ -248,7 +286,7 @@ def tested_batter_model(
         tuple[object, float]: A tuple containing the trained model object and the accuracy score.
     """
     # Split into training and testing datasets
-    X_train, X_test, y_train, y_test = batter_model_datasets(batter_model_data)
+    X_train, X_test, y_train, y_test = model_datasets(model_data, target)
 
     # Train the model
     if sklearn_model_type == "logistic_regression":
@@ -264,7 +302,7 @@ def tested_batter_model(
             "Invalid sklearn_model_type. Please choose a valid model type."
         )
 
-    model = trained_batter_model(X_train, y_train, model_type)
+    model = trained_model(X_train, y_train, model_type)
 
     # Evaluate the model
     accuracy = model.score(X_test, y_test)
