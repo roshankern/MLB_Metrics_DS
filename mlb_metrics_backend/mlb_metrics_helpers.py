@@ -108,7 +108,7 @@ def parse_career_timeline(player_metrics: dict) -> tuple[str, str]:
     start_dt = player_metrics["mlb_debut"]
     end_dt = player_metrics["last_played"] or datetime.date.today().strftime("%Y-%m-%d")
 
-    return (start_dt, end_dt)
+    return start_dt, end_dt
 
 
 def pitcher_model_data(player_specific_metrics: pd.DataFrame) -> pd.DataFrame:

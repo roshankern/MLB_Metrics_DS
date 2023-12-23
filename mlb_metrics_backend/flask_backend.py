@@ -40,27 +40,26 @@ def get_player_general_metrics():
         return jsonify({"error": str(e)}), 404
 
 
-@app.route("/api/v1/player-career-timeline", methods=["GET"])
+@app.route("/api/v1/player-career-timeline", methods=["POST"])
 def get_player_career_timeline():
-    player_id = request.args.get("player_id")
+    player_general_metrics = request.get_json()
 
-    if not player_id:
-        return jsonify({"error": "Missing player ID"}), 400
+    if not player_general_metrics:
+        return jsonify({"error": "No data provided"}), 400
 
     try:
-        player_id = int(player_id)  # Convert to integer
-        player_metrics = mlb_metrics_helpers.player_general_metrics(player_id)
-        career_timeline = mlb_metrics_helpers.parse_career_timeline(player_metrics)
+        # Here, ensure that 'general_metrics' is in the correct format expected by parse_career_timeline
+        start_dt, end_dt = mlb_metrics_helpers.parse_career_timeline(
+            player_general_metrics
+        )
 
         return (
-            jsonify(
-                {"mlb_debut": career_timeline[0], "last_played": career_timeline[1]}
-            ),
+            jsonify({"start_dt": start_dt, "end_dt": end_dt}),
             200,
         )
 
-    except ValueError as e:
-        return jsonify({"error": str(e)}), 404
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 
 @app.route("/api/v1/player-specific-metrics", methods=["GET"])
