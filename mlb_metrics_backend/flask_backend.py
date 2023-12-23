@@ -1,8 +1,12 @@
-from flask import Flask, jsonify, request
-import pandas as pd
 import mlb_metrics_helpers
 
+import pandas as pd
+
+from flask_cors import CORS
+from flask import Flask, jsonify, request
+
 app = Flask(__name__)
+CORS(app)
 
 
 @app.route("/api/v1/player-id", methods=["GET"])
