@@ -1,3 +1,4 @@
+import uuid
 import warnings
 
 warnings.filterwarnings("ignore")
@@ -11,6 +12,8 @@ from flask import Flask, jsonify, request
 
 app = Flask(__name__)
 CORS(app)
+
+trained_models = {}
 
 
 @app.route("/api/v1/player-id", methods=["GET"])
@@ -133,6 +136,61 @@ def pitcher_model_data():
 
     except Exception as e:
         return jsonify({"error": str(e)}), 400
+
+
+@app.route("/api/v1/batter-model-data", methods=["POST"])
+def pitcher_model_data():
+    try:
+        # Retrieve JSON data from the request
+        json_data = request.get_json()
+
+        # Convert JSON to DataFrame
+        player_specific_metrics = pd.DataFrame(json_data)
+
+        # Process the data using the pitcher_model_data function
+        processed_data = mlb_metrics_helpers.batter_model_data(player_specific_metrics)
+
+        # Convert processed data back to JSON
+        processed_json = processed_data.to_json(orient="records", date_format="iso")
+
+        return processed_json, 200
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
+
+
+@app.route("/api/v1/tested-model", methods=["POST"])
+def tested_model():
+    data = request.get_json()
+    player_metrics = pd.DataFrame(data["player_metrics"])
+    target = data["target"]
+    model_type = data["model_type"]
+
+    # Training the model
+    trained_model, accuracy = mlb_metrics_helpers.tested_model(
+        player_metrics, target, model_type
+    )
+
+    # Generating a UUID for the model
+    model_uuid = str(uuid.uuid4())
+    trained_models[model_uuid] = trained_model
+
+    return jsonify({"model_uuid": model_uuid, "accuracy": accuracy}), 200
+
+
+# Endpoint for making predictions
+@app.route("/api/v1/predict", methods=["POST"])
+def predict():
+    data = request.get_json()
+    model_uuid = data["model_uuid"]
+    prediction_data = data["prediction_data"]
+
+    if model_uuid in trained_models:
+        model = trained_models[model_uuid]
+        prediction = model.predict(prediction_data)
+        return jsonify({"prediction": prediction.tolist()}), 200
+    else:
+        return jsonify({"error": "Model not found"}), 404
 
 
 if __name__ == "__main__":
