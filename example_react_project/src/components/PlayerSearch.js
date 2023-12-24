@@ -4,22 +4,46 @@ import axios from 'axios';
 const PlayerSearch = ({ onSearchComplete }) => {
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
-    const [statType, setStatType] = useState('pitcher'); // Default to pitcher
+    const [metricType, setMetricType] = useState('pitching'); // Default to pitcher
 
     const API_ENDPOINT = "http://127.0.0.1:5000/api/v1/";
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            // Make an API call to your Flask backend
-            const response = await axios.get(`${API_ENDPOINT}player-id`, {
-                params: { first_name: firstName, last_name: lastName, stat_type: statType }
+            console.log('Making API calls to Flask backend...');
+
+            // Make an API calls to Flask backend
+            const playerIdResponse = await axios.get(`${API_ENDPOINT}player-id`, {
+                params: { first_name: firstName, last_name: lastName }
             });
+            const playerId = playerIdResponse.data.player_id;
+
+            const generalMetricsResponse = await axios.get(`${API_ENDPOINT}player-general-metrics`, {
+                params: { player_id: playerId }
+            });
+            const playerGeneralMetrics = generalMetricsResponse.data;
+
+            const careerTimelineResponse = await axios.post(`${API_ENDPOINT}player-career-timeline`, playerGeneralMetrics);
+            const playerCareerTimeline = careerTimelineResponse.data;
+
+            const specificMetricsResponse = await axios.get(`${API_ENDPOINT}player-specific-metrics`, {
+                params: { player_id: playerId, metric_type: metricType, start_dt: playerCareerTimeline["start_dt"], end_dt: playerCareerTimeline["end_dt"] }
+            });
+            const playerSpecificMetrics = specificMetricsResponse.data;
+
+            const playerData = {
+                playerId: playerId,
+                generalMetrics: playerGeneralMetrics,
+                careerTimeline: playerCareerTimeline,
+                specificMetrics: playerSpecificMetrics
+            };
+
             // Call the onSearchComplete function passed as prop with the response data
-            onSearchComplete(response.data);
+            console.log('Player data:', playerData)
+            onSearchComplete(playerData);
         } catch (error) {
             console.error('Error fetching player data:', error);
-            // Handle errors here (e.g., show an alert or notification)
         }
     };
 
@@ -43,9 +67,9 @@ const PlayerSearch = ({ onSearchComplete }) => {
             </div>
             <div>
                 <label>Stat Type:</label>
-                <select value={statType} onChange={(e) => setStatType(e.target.value)}>
-                    <option value="pitcher">Pitcher</option>
-                    <option value="batter">Batter</option>
+                <select value={metricType} onChange={(e) => setMetricType(e.target.value)}>
+                    <option value="pitching">Pitching</option>
+                    <option value="batting">Batting</option>
                 </select>
             </div>
             <button type="submit">Search</button>

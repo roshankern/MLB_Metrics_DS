@@ -139,7 +139,7 @@ def pitcher_model_data():
 
 
 @app.route("/api/v1/batter-model-data", methods=["POST"])
-def pitcher_model_data():
+def batter_model_data():
     try:
         # Retrieve JSON data from the request
         json_data = request.get_json()
@@ -147,7 +147,7 @@ def pitcher_model_data():
         # Convert JSON to DataFrame
         player_specific_metrics = pd.DataFrame(json_data)
 
-        # Process the data using the pitcher_model_data function
+        # Process the data using the batter_model_data function
         processed_data = mlb_metrics_helpers.batter_model_data(player_specific_metrics)
 
         # Convert processed data back to JSON
