@@ -96,7 +96,7 @@ def get_player_specific_metrics():
 
 
 @app.route("/api/v1/plate-crossing-metrics", methods=["POST"])
-def get_plate_crossing_metrics():
+def plate_crossing_metrics():
     player_metrics_json = request.get_json()
 
     if not player_metrics_json:
