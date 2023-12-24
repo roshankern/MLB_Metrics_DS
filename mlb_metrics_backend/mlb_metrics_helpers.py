@@ -61,6 +61,25 @@ def player_general_metrics(
     return statsapi.player_stat_data(player_id, type=timeline_type)
 
 
+def parse_career_timeline(player_metrics: dict) -> tuple[str, str]:
+    """
+    Parses the career timeline of a player and returns a tuple with the start and end dates in the format "YYYY-MM-DD".
+    If player is still active, the end date will be the current date.
+
+
+    Args:
+        player_metrics (dict): A dictionary containing the player's metrics from MLB-StatsAPI.
+
+    Returns:
+        tuple[str, str]: A tuple with the start and end dates of the player's career.
+    """
+
+    start_dt = player_metrics["mlb_debut"]
+    end_dt = player_metrics["last_played"] or datetime.date.today().strftime("%Y-%m-%d")
+
+    return start_dt, end_dt
+
+
 def player_specific_metrics(
     player_id: int,
     metric_type: Literal["pitching", "batting"],
@@ -92,23 +111,22 @@ def player_specific_metrics(
         raise ValueError("Invalid metric_type. Must be either 'pitching' or 'batting'.")
 
 
-def parse_career_timeline(player_metrics: dict) -> tuple[str, str]:
+def plate_crossing_metrics(
+    player_specific_metrics: pd.DataFrame,
+) -> pd.DataFrame:
     """
-    Parses the career timeline of a player and returns a tuple with the start and end dates in the format "YYYY-MM-DD".
-    If player is still active, the end date will be the current date.
+    Retrieves the plate crossing metrics for a specific player.
 
-
-    Args:
-        player_metrics (dict): A dictionary containing the player's metrics from MLB-StatsAPI.
+    Parameters:
+        player_specific_metrics (pd.DataFrame): DataFrame containing player-specific metrics from pybaseball statcast API.
 
     Returns:
-        tuple[str, str]: A tuple with the start and end dates of the player's career.
+        pd.DataFrame: DataFrame containing plate crossing metrics for the player.
     """
-
-    start_dt = player_metrics["mlb_debut"]
-    end_dt = player_metrics["last_played"] or datetime.date.today().strftime("%Y-%m-%d")
-
-    return start_dt, end_dt
+    return player_specific_metrics[
+        ~player_specific_metrics["plate_x"].isna()
+        & ~player_specific_metrics["plate_z"].isna()
+    ]
 
 
 def pitcher_model_data(player_specific_metrics: pd.DataFrame) -> pd.DataFrame:

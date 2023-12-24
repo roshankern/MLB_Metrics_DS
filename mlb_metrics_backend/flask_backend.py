@@ -1,3 +1,7 @@
+import warnings
+
+warnings.filterwarnings("ignore")
+
 import mlb_metrics_helpers
 
 import pandas as pd
@@ -88,11 +92,33 @@ def get_player_specific_metrics():
         return jsonify({"error": str(e)}), 404
 
 
+@app.route("/api/v1/plate-crossing-metrics", methods=["POST"])
+def get_plate_crossing_metrics():
+    player_metrics_json = request.get_json()
+
+    if not player_metrics_json:
+        return jsonify({"error": "Missing player metrics data"}), 400
+
+    try:
+        # Convert JSON to DataFrame
+        player_metrics_df = pd.DataFrame(player_metrics_json)
+
+        # Apply plate_crossing_metrics function
+        plate_metrics = mlb_metrics_helpers.plate_crossing_metrics(player_metrics_df)
+
+        # Convert DataFrame to JSON
+        plate_metrics_json = plate_metrics.to_json(orient="records", date_format="iso")
+        return plate_metrics_json, 200
+
+    except (ValueError, KeyError) as e:
+        return jsonify({"error": str(e)}), 404
+
+
 @app.route("/api/v1/pitcher-model-data", methods=["POST"])
 def pitcher_model_data():
     try:
         # Retrieve JSON data from the request
-        json_data = request.json
+        json_data = request.get_json()
 
         # Convert JSON to DataFrame
         player_specific_metrics = pd.DataFrame(json_data)
