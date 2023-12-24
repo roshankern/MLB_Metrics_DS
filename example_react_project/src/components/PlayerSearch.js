@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 
-const PlayerSearch = ({ onSearchComplete }) => {
+const PlayerSearch = ({ onSearchStarted, onSearchComplete }) => {
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
     const [metricType, setMetricType] = useState('pitching'); // Default to pitcher
@@ -9,7 +9,10 @@ const PlayerSearch = ({ onSearchComplete }) => {
     const API_ENDPOINT = "http://127.0.0.1:5000/api/v1/";
 
     const handleSubmit = async (e) => {
+
         e.preventDefault();
+        onSearchStarted();
+
         try {
             console.log('Making API calls to Flask backend...');
 
@@ -48,32 +51,36 @@ const PlayerSearch = ({ onSearchComplete }) => {
     };
 
     return (
-        <form onSubmit={handleSubmit}>
-            <div>
-                <label>First Name:</label>
-                <input
-                    type="text"
-                    value={firstName}
-                    onChange={(e) => setFirstName(e.target.value)}
-                />
-            </div>
-            <div>
-                <label>Last Name:</label>
-                <input
-                    type="text"
-                    value={lastName}
-                    onChange={(e) => setLastName(e.target.value)}
-                />
-            </div>
-            <div>
-                <label>Stat Type:</label>
-                <select value={metricType} onChange={(e) => setMetricType(e.target.value)}>
-                    <option value="pitching">Pitching</option>
-                    <option value="batting">Batting</option>
-                </select>
-            </div>
-            <button type="submit">Search</button>
-        </form>
+        <div>
+            <h2>Player Search:</h2>
+            <form onSubmit={handleSubmit}>
+                <div>
+                    <label>First Name:</label>
+                    <input
+                        type="text"
+                        value={firstName}
+                        onChange={(e) => setFirstName(e.target.value)}
+                    />
+                </div>
+                <div>
+                    <label>Last Name:</label>
+                    <input
+                        type="text"
+                        value={lastName}
+                        onChange={(e) => setLastName(e.target.value)}
+                    />
+                </div>
+                <div>
+                    <label>Stat Type:</label>
+                    <select value={metricType} onChange={(e) => setMetricType(e.target.value)}>
+                        <option value="pitching">Pitching</option>
+                        <option value="batting">Batting</option>
+                    </select>
+                </div>
+                <button type="submit">Search</button>
+            </form>
+        </div>
+
     );
 };
 

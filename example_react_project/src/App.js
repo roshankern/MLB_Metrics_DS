@@ -1,18 +1,26 @@
+// App.js
 import React, { useState } from 'react';
-import PlayerSearch from './components/PlayerSearch'; // Adjust the path as needed
+import PlayerSearch from './components/PlayerSearch';
+import PlayerData from './components/PlayerData';
 
 function App() {
+  const [searching, setSearching] = useState(false);
   const [playerSearchData, setPlayerSearchData] = useState(null);
 
+  const handleSearchStarted = () => {
+    setSearching(true);
+    setPlayerSearchData(null); // Reset the player data
+  };
+
   const handleSearchComplete = (data) => {
+    setSearching(false);
     setPlayerSearchData(data);
-    // You can now use playerData to render additional components or pass data to other components
   };
 
   return (
     <div className="App">
-      <PlayerSearch onSearchComplete={handleSearchComplete} />
-      {/* Render other components conditionally based on playerData */}
+      <PlayerSearch onSearchStarted={handleSearchStarted} onSearchComplete={handleSearchComplete} />
+      <PlayerData searching={searching} data={playerSearchData} />
     </div>
   );
 }
