@@ -42,9 +42,12 @@ def get_player_general_metrics():
 
 @app.route("/api/v1/player-career-timeline", methods=["POST"])
 def get_player_career_timeline():
+    print("Called get_player_career_timeline")
     player_general_metrics = request.get_json()
+    print(player_general_metrics)
 
     if not player_general_metrics:
+        print("No data provided")
         return jsonify({"error": "No data provided"}), 400
 
     try:
