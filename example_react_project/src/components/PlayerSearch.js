@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { Button, FormControl, InputLabel, MenuItem, Select, TextField, Paper, Grid } from '@mui/material';
 
 const PlayerSearch = ({ onSearchStarted, onSearchComplete }) => {
     const [firstName, setFirstName] = useState('');
@@ -54,35 +55,49 @@ const PlayerSearch = ({ onSearchStarted, onSearchComplete }) => {
     };
 
     return (
-        <div>
+        <Paper style={{ padding: '20px' }}>
             <form onSubmit={handleSubmit}>
-                <div>
-                    <label>First Name:</label>
-                    <input
-                        type="text"
-                        value={firstName}
-                        onChange={(e) => setFirstName(e.target.value)}
-                    />
-                </div>
-                <div>
-                    <label>Last Name:</label>
-                    <input
-                        type="text"
-                        value={lastName}
-                        onChange={(e) => setLastName(e.target.value)}
-                    />
-                </div>
-                <div>
-                    <label>Stat Type:</label>
-                    <select value={metricType} onChange={(e) => setMetricType(e.target.value)}>
-                        <option value="pitching">Pitching</option>
-                        <option value="batting">Batting</option>
-                    </select>
-                </div>
-                <button type="submit">Search</button>
+                <Grid container spacing={3}>
+                    <Grid item xs={12}>
+                        <TextField
+                            label="First Name"
+                            variant="outlined"
+                            fullWidth
+                            value={firstName}
+                            onChange={(e) => setFirstName(e.target.value)}
+                        />
+                    </Grid>
+                    <Grid item xs={12}>
+                        <TextField
+                            label="Last Name"
+                            variant="outlined"
+                            fullWidth
+                            value={lastName}
+                            onChange={(e) => setLastName(e.target.value)}
+                        />
+                    </Grid>
+                    <Grid item xs={12}>
+                        <FormControl fullWidth>
+                            <InputLabel id="metric-type-label">Stat Type</InputLabel>
+                            <Select
+                                labelId="metric-type-label"
+                                value={metricType}
+                                label="Stat Type"
+                                onChange={(e) => setMetricType(e.target.value)}
+                            >
+                                <MenuItem value="pitching">Pitching</MenuItem>
+                                <MenuItem value="batting">Batting</MenuItem>
+                            </Select>
+                        </FormControl>
+                    </Grid>
+                    <Grid item xs={12}>
+                        <Button type="submit" variant="contained" color="primary" fullWidth>
+                            Search
+                        </Button>
+                    </Grid>
+                </Grid>
             </form>
-        </div>
-
+        </Paper>
     );
 };
 

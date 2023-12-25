@@ -1,8 +1,10 @@
 // App.js
 import React, { useState } from 'react';
 import { Grid, Paper, Typography } from '@mui/material';
+
 import PlayerSearch from './components/PlayerSearch';
 import PlayerData from './components/PlayerData';
+import MLModels from './components/MLModels';
 
 function App() {
   const [searching, setSearching] = useState(false);
@@ -32,6 +34,7 @@ function App() {
 
       <Paper elevation={3} style={{ padding: '16px', marginBottom: '16px' }}>
         <h2>ML Models:</h2>
+        <MLModels data={playerSearchData} />
       </Paper>
 
 
