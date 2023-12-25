@@ -1,6 +1,6 @@
 // App.js
 import React, { useState } from 'react';
-import { Grid, Paper, Typography } from '@mui/material';
+import { Paper } from '@mui/material';
 
 import PlayerSearch from './components/PlayerSearch';
 import PlayerData from './components/PlayerData';

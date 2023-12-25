@@ -156,13 +156,13 @@ def model_data():
 @app.route("/api/v1/tested-model", methods=["POST"])
 def tested_model():
     data = request.get_json()
-    player_metrics = pd.DataFrame(data["player_metrics"])
+    model_data = pd.DataFrame(data["model_data"])
     target = data["target"]
     model_type = data["model_type"]
 
     # Training the model
     trained_model, accuracy = mlb_metrics_helpers.tested_model(
-        player_metrics, target, model_type
+        model_data, target, model_type
     )
 
     # Generating a UUID for the model
