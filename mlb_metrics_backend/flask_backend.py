@@ -123,38 +123,26 @@ def get_plate_crossing_metrics():
         return jsonify({"error": str(e)}), 404
 
 
-@app.route("/api/v1/pitcher-model-data", methods=["POST"])
-def pitcher_model_data():
+@app.route("/api/v1/model-data", methods=["POST"])
+def model_data():
     try:
         # Retrieve JSON data from the request
-        json_data = request.get_json()
+        data = request.get_json()
+        player_metrics = data["player_metrics"]
+        metric_type = data["metric_type"]
 
-        # Convert JSON to DataFrame
-        player_specific_metrics = pd.DataFrame(json_data)
+        # Convert JSON data to DataFrame
+        player_specific_metrics = pd.DataFrame(player_metrics)
 
-        # Process the data using the pitcher_model_data function
-        processed_data = mlb_metrics_helpers.pitcher_model_data(player_specific_metrics)
-
-        # Convert processed data back to JSON
-        processed_json = processed_data.to_json(orient="records", date_format="iso")
-
-        return processed_json, 200
-
-    except Exception as e:
-        return jsonify({"error": str(e)}), 400
-
-
-@app.route("/api/v1/batter-model-data", methods=["POST"])
-def batter_model_data():
-    try:
-        # Retrieve JSON data from the request
-        json_data = request.get_json()
-
-        # Convert JSON to DataFrame
-        player_specific_metrics = pd.DataFrame(json_data)
-
-        # Process the data using the batter_model_data function
-        processed_data = mlb_metrics_helpers.batter_model_data(player_specific_metrics)
+        # Process the data using the relevant model_data function
+        if metric_type == "pitching":
+            processed_data = mlb_metrics_helpers.pitcher_model_data(
+                player_specific_metrics
+            )
+        else:
+            processed_data = mlb_metrics_helpers.batter_model_data(
+                player_specific_metrics
+            )
 
         # Convert processed data back to JSON
         processed_json = processed_data.to_json(orient="records", date_format="iso")
