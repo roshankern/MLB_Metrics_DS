@@ -1,5 +1,6 @@
 // App.js
 import React, { useState } from 'react';
+import { Grid, Paper, Typography } from '@mui/material';
 import PlayerSearch from './components/PlayerSearch';
 import PlayerData from './components/PlayerData';
 
@@ -19,8 +20,21 @@ function App() {
 
   return (
     <div className="App">
-      <PlayerSearch onSearchStarted={handleSearchStarted} onSearchComplete={handleSearchComplete} />
-      <PlayerData searching={searching} data={playerSearchData} />
+      <Paper elevation={3} style={{ padding: '16px', marginBottom: '16px' }}>
+        <h2>Player Search:</h2>
+        <PlayerSearch onSearchStarted={handleSearchStarted} onSearchComplete={handleSearchComplete} />
+      </Paper>
+
+      <Paper elevation={3} style={{ padding: '16px', marginBottom: '16px' }}>
+        <h2>Player Data:</h2>
+        <PlayerData searching={searching} data={playerSearchData} />
+      </Paper>
+
+      <Paper elevation={3} style={{ padding: '16px', marginBottom: '16px' }}>
+        <h2>ML Models:</h2>
+      </Paper>
+
+
     </div>
   );
 }

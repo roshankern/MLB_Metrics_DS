@@ -36,6 +36,9 @@ const PlayerSearch = ({ onSearchStarted, onSearchComplete }) => {
             const playerSpecificMetrics = specificMetricsResponse.data;
 
             const playerData = {
+                firstName: firstName,
+                lastName: lastName,
+                metricType: metricType,
                 playerId: playerId,
                 generalMetrics: playerGeneralMetrics,
                 careerTimeline: playerCareerTimeline,
@@ -52,7 +55,6 @@ const PlayerSearch = ({ onSearchStarted, onSearchComplete }) => {
 
     return (
         <div>
-            <h2>Player Search:</h2>
             <form onSubmit={handleSubmit}>
                 <div>
                     <label>First Name:</label>
