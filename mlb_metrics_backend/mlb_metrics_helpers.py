@@ -112,21 +112,27 @@ def player_specific_metrics(
 
 
 def plate_crossing_metrics(
-    player_specific_metrics: pd.DataFrame,
+    player_specific_metrics: pd.DataFrame, metric_type: Literal["pitching", "batting"]
 ) -> pd.DataFrame:
     """
     Retrieves the plate crossing metrics for a specific player.
 
     Parameters:
         player_specific_metrics (pd.DataFrame): DataFrame containing player-specific metrics from pybaseball statcast API.
+        metric_type (Literal["pitching", "batting"]): The type of metric to retrieve (either "pitching" or "batting").
 
     Returns:
         pd.DataFrame: DataFrame containing plate crossing metrics for the player.
     """
-    return player_specific_metrics[
+    plate_crossing_metrics = player_specific_metrics[
         ~player_specific_metrics["plate_x"].isna()
         & ~player_specific_metrics["plate_z"].isna()
     ]
+
+    if metric_type == "pitching":
+        return plate_crossing_metrics[["pitch_name", "plate_x", "plate_z"]]
+    else:
+        return plate_crossing_metrics[["description", "plate_x", "plate_z"]]
 
 
 def pitcher_model_data(player_specific_metrics: pd.DataFrame) -> pd.DataFrame:

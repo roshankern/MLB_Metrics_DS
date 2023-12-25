@@ -95,19 +95,25 @@ def get_player_specific_metrics():
         return jsonify({"error": str(e)}), 404
 
 
-@app.route("/api/v1/plate-crossing-metrics", methods=["POST"])
-def plate_crossing_metrics():
+def get_plate_crossing_metrics():
     player_metrics_json = request.get_json()
 
     if not player_metrics_json:
         return jsonify({"error": "Missing player metrics data"}), 400
 
     try:
+        # Extract metric_type from JSON
+        metric_type = player_metrics_json.get("metric_type")
+        if metric_type not in ["pitching", "batting"]:
+            return jsonify({"error": "Invalid or missing metric type"}), 400
+
         # Convert JSON to DataFrame
-        player_metrics_df = pd.DataFrame(player_metrics_json)
+        player_metrics_df = pd.DataFrame(player_metrics_json["specific_metrics"])
 
         # Apply plate_crossing_metrics function
-        plate_metrics = mlb_metrics_helpers.plate_crossing_metrics(player_metrics_df)
+        plate_metrics = mlb_metrics_helpers.plate_crossing_metrics(
+            player_metrics_df, metric_type
+        )
 
         # Convert DataFrame to JSON
         plate_metrics_json = plate_metrics.to_json(orient="records", date_format="iso")
