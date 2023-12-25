@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Grid, Button, FormControl, InputLabel, MenuItem, Select, Typography } from '@mui/material';
 import axios from 'axios';
 
@@ -39,8 +39,15 @@ const MLModels = ({ data }) => {
         }
     };
 
+    useEffect(() => {
+        if (!data) {
+            setModelType("");
+            setIsTraining(0);
+        }
+    }, [data]);
+
+
     if (!data) {
-        setIsTraining(0);
         return null;
     }
 
