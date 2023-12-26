@@ -177,12 +177,26 @@ def tested_model():
 def predict():
     data = request.get_json()
     model_uuid = data["model_uuid"]
-    prediction_data = data["prediction_data"]
+    feature_data = data["feature_data"]
+
+    # Convert JSON data to DataFrame
+    print(feature_data)
+    feature_data = pd.DataFrame(feature_data)
+    print(feature_data)
 
     if model_uuid in trained_models:
         model = trained_models[model_uuid]
-        prediction = model.predict(prediction_data)
-        return jsonify({"prediction": prediction.tolist()}), 200
+        prediction, prediction_probas = mlb_metrics_helpers.model_prediction(
+            model, feature_data
+        )
+        print(prediction)
+        print(
+            jsonify({"prediction": prediction, "prediction_probas": prediction_probas})
+        )
+        return (
+            jsonify({"prediction": prediction, "prediction_probas": prediction_probas}),
+            200,
+        )
     else:
         return jsonify({"error": "Model not found"}), 404
 

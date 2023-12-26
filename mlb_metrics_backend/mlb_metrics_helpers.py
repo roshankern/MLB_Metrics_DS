@@ -3,7 +3,9 @@ import datetime
 
 import pybaseball as pb
 import statsapi
+
 import pandas as pd
+import numpy as np
 
 from sklearn.model_selection import train_test_split
 from sklearn.compose import make_column_selector as selector
@@ -15,7 +17,7 @@ from sklearn.ensemble import (
     GradientBoostingClassifier,
     HistGradientBoostingClassifier,
 )
-from sklearn.pipeline import make_pipeline
+from sklearn.pipeline import make_pipeline, Pipeline
 
 
 def player_id(last_name: str, first_name: str, player_num: int = 0) -> int:
@@ -246,8 +248,8 @@ def model_datasets(
 
 
 def trained_model(
-    X_train: pd.DataFrame, y_train: pd.Series, sklearn_model: object
-) -> object:
+    X_train: pd.DataFrame, y_train: pd.Series, sklearn_model: Pipeline
+) -> Pipeline:
     """
     Trains a baseball model using the provided training data.
 
@@ -257,7 +259,7 @@ def trained_model(
         sklearn_model (object): Type of model to be trained.
 
     Returns:
-        object
+        Pipeline : sklearn pipeline for processing and predicting baseball data point.
     """
     # Select numerical and categorical columns
     numerical_columns_selector = selector(dtype_exclude=object)
@@ -293,7 +295,7 @@ def tested_model(
         "gradient_boosting",
         "hist_gradient_boosting",
     ],
-) -> tuple[object, float]:
+) -> tuple[Pipeline, float]:
     """
     Trains and evaluates a player model using the specified sklearn model type.
 
@@ -307,7 +309,7 @@ def tested_model(
             - "hist_gradient_boosting"
 
     Returns:
-        tuple[object, float]: A tuple containing the trained model object and the accuracy score.
+        tuple[Pipeline, float]: A tuple containing the trained model pipeline and the accuracy score.
     """
     # Split into training and testing datasets
     X_train, X_test, y_train, y_test = model_datasets(model_data, target)
@@ -332,3 +334,22 @@ def tested_model(
     accuracy = model.score(X_test, y_test)
 
     return (model, accuracy)
+
+
+def model_prediction(model: Pipeline, sample_X: pd.DataFrame) -> (object, list):
+    """
+    Makes predictions using the trained model on the provided sample data.
+
+    Parameters:
+        model (Pipeline): The trained sklearn model pipeline.
+        sample_X (pd.DataFrame): Sample feature dataset for prediction.
+
+    Returns:
+        Tuple containing:
+        - object: Predicted class label
+        - list: Prediction probabilities for each class.
+    """
+    prediction = model.predict(sample_X)[0]
+    prediction_probas = model.predict_proba(sample_X)[0].tolist()
+
+    return prediction, prediction_probas
