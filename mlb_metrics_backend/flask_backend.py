@@ -180,7 +180,6 @@ def predict():
     feature_data = data["feature_data"]
 
     # Convert JSON data to DataFrame
-    print(feature_data)
     feature_data = pd.DataFrame(feature_data)
     print(feature_data)
 
@@ -190,9 +189,7 @@ def predict():
             model, feature_data
         )
         print(prediction)
-        print(
-            jsonify({"prediction": prediction, "prediction_probas": prediction_probas})
-        )
+        print(jsonify({"prediction": prediction}))
         return (
             jsonify({"prediction": prediction, "prediction_probas": prediction_probas}),
             200,

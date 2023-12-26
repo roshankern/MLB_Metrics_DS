@@ -346,10 +346,13 @@ def model_prediction(model: Pipeline, sample_X: pd.DataFrame) -> (object, list):
 
     Returns:
         Tuple containing:
-        - object: Predicted class label
+        - str: Predicted class label
         - list: Prediction probabilities for each class.
     """
     prediction = model.predict(sample_X)[0]
+    prediction = str(prediction)
+
     prediction_probas = model.predict_proba(sample_X)[0].tolist()
+    prediction_probas = [float(x) for x in prediction_probas]
 
     return prediction, prediction_probas

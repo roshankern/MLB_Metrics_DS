@@ -62,12 +62,19 @@ const ModelPredict = ({ model_uuid, model_data, metric_type }) => {
     return (
         <Grid container spacing={2}>
             <Grid item xs={12}>
-                <Typography variant="h6">Model Predict</Typography>
+                <Typography variant="h6">Model Prediction</Typography>
             </Grid>
-            <Grid item xs={12}>
-                <Button variant="contained" color="primary" onClick={handleRandomPitch}>
-                    Choose Random Pitch
-                </Button>
+            <Grid item xs={12} container spacing={2}>
+                <Grid item>
+                    <Button variant="contained" color="primary" onClick={handleRandomPitch}>
+                        Choose Random Pitch
+                    </Button>
+                </Grid>
+                <Grid item>
+                    <Button variant="contained" color="primary" onClick={handlePredict}>
+                        Predict
+                    </Button>
+                </Grid>
             </Grid>
             <Grid item xs={12}>
                 <TableContainer component={Paper}>
@@ -100,12 +107,6 @@ const ModelPredict = ({ model_uuid, model_data, metric_type }) => {
                 </TableContainer>
             </Grid>
 
-            <Grid item xs={12}>
-                <Button variant="contained" color="primary" onClick={handlePredict}>
-                    Predict
-                </Button>
-            </Grid>
-
             {isPredicting && (
                 <Grid item xs={12}>
                     <Typography variant="h6">Predicting...</Typography>
@@ -115,7 +116,6 @@ const ModelPredict = ({ model_uuid, model_data, metric_type }) => {
             {!isPredicting && prediction && (
                 <Grid item xs={12}>
                     <Typography variant="subtitle1">Prediction: {prediction.prediction}</Typography>
-                    <Typography variant="subtitle1">Prediction Probabilities: {JSON.stringify(prediction.prediction_probas)}</Typography>
                 </Grid>
             )}
         </Grid>
