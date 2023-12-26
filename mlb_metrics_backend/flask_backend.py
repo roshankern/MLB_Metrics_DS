@@ -130,6 +130,7 @@ def model_data():
         data = request.get_json()
         player_metrics = data["player_metrics"]
         metric_type = data["metric_type"]
+        print(metric_type)
 
         # Convert JSON data to DataFrame
         player_specific_metrics = pd.DataFrame(player_metrics)
@@ -143,6 +144,8 @@ def model_data():
             processed_data = mlb_metrics_helpers.batter_model_data(
                 player_specific_metrics
             )
+
+        print(processed_data)
 
         # Convert processed data back to JSON
         processed_json = processed_data.to_json(orient="records", date_format="iso")
@@ -181,15 +184,12 @@ def predict():
 
     # Convert JSON data to DataFrame
     feature_data = pd.DataFrame(feature_data)
-    print(feature_data)
 
     if model_uuid in trained_models:
         model = trained_models[model_uuid]
         prediction, prediction_probas = mlb_metrics_helpers.model_prediction(
             model, feature_data
         )
-        print(prediction)
-        print(jsonify({"prediction": prediction}))
         return (
             jsonify({"prediction": prediction, "prediction_probas": prediction_probas}),
             200,

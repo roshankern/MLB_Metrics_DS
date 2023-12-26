@@ -15,33 +15,34 @@ const PlayerSearch = ({ onSearchStarted, onSearchComplete }) => {
         onSearchStarted();
 
         try {
-            console.log('Making API calls to Flask backend...');
 
-            // Make an API calls to Flask backend
+            console.log('Getting player ID...');
             const playerIdResponse = await axios.get(`${API_ENDPOINT}player-id`, {
                 params: { first_name: firstName, last_name: lastName }
             });
             const playerId = playerIdResponse.data.player_id;
 
+            console.log('Getting player general metrics...');
             const generalMetricsResponse = await axios.get(`${API_ENDPOINT}player-general-metrics`, {
                 params: { player_id: playerId }
             });
             const playerGeneralMetrics = generalMetricsResponse.data;
 
+            console.log('Getting player career timeline...');
             const careerTimelineResponse = await axios.post(`${API_ENDPOINT}player-career-timeline`, playerGeneralMetrics);
             const playerCareerTimeline = careerTimelineResponse.data;
 
+            console.log('Getting player specific metrics...');
             const specificMetricsResponse = await axios.get(`${API_ENDPOINT}player-specific-metrics`, {
                 params: { player_id: playerId, metric_type: metricType, start_dt: playerCareerTimeline["start_dt"], end_dt: playerCareerTimeline["end_dt"] }
             });
             const playerSpecificMetrics = specificMetricsResponse.data;
 
-            // get model data
+            console.log('Getting player model data...');
             const modelDataResponse = await axios.post(`${API_ENDPOINT}model-data`, {
                 player_metrics: playerSpecificMetrics,
                 metric_type: metricType
             });
-
             const playerModelData = modelDataResponse.data;
 
             const playerData = {
@@ -55,8 +56,7 @@ const PlayerSearch = ({ onSearchStarted, onSearchComplete }) => {
                 modelData: playerModelData
             };
 
-            // Call the onSearchComplete function passed as prop with the response data
-            console.log('Player data:', playerData)
+
             onSearchComplete(playerData);
         } catch (error) {
             console.error('Error fetching player data:', error);

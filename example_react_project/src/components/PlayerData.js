@@ -108,7 +108,7 @@ const PlayerData = ({ searching, data }) => {
         );
     }
 
-    return null; // Render nothing if not searching and no data
+    return null;
 };
 
 export default PlayerData;
