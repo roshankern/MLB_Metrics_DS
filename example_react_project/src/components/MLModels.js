@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { Grid, Button, FormControl, InputLabel, MenuItem, Select, Typography } from '@mui/material';
+import { Paper, Grid, Button, FormControl, InputLabel, MenuItem, Select, Typography } from '@mui/material';
 import axios from 'axios';
+
+import ModelPredict from './ModelPredict';
 
 const MLModels = ({ data }) => {
     const [modelType, setModelType] = useState('');
     const [isTraining, setIsTraining] = useState(0);
+    const [modelDataResponse, setModelDataResponse] = useState(null);
     const [trainResponse, setTrainResponse] = useState(null);
 
     const handleModelTypeChange = (event) => {
@@ -23,10 +26,11 @@ const MLModels = ({ data }) => {
                 player_metrics: data.specificMetrics,
                 metric_type: data.metricType
             });
-            const modelData = modelDataResponse.data;
+            setModelDataResponse(modelDataResponse.data);
+
 
             const modelTrainingResponse = await axios.post(`${API_ENDPOINT}tested-model`, {
-                model_data: modelData,
+                model_data: modelDataResponse.data,
                 target: data.metricType === "pitching" ? "zone" : "description",
                 model_type: modelType
             });
@@ -84,10 +88,31 @@ const MLModels = ({ data }) => {
 
             {isTraining === 2 && trainResponse && (
                 <Grid item xs={12}>
-                    <div>
-                        <Typography variant="subtitle1">Model UUID: {trainResponse.model_uuid}</Typography>
-                        <Typography variant="subtitle1">Accuracy: {trainResponse.accuracy}</Typography>
-                    </div>
+                    <Grid container spacing={2}>
+                        <Grid item xs={6}>
+                            <Paper elevation={3} style={{ padding: '16px', marginBottom: '16px' }}>
+                                <Typography variant="h6">Model Accuracy</Typography>
+                                <Typography>{trainResponse.accuracy}</Typography>
+                            </Paper>
+                        </Grid>
+                        <Grid item xs={6}>
+                            <Paper elevation={3} style={{ padding: '16px', marginBottom: '16px' }}>
+                                <Typography variant="h6">Model UUID</Typography>
+                                <Typography>{trainResponse.model_uuid}</Typography>
+                            </Paper>
+                        </Grid>
+                    </Grid>
+                    <Grid container spacing={2}>
+                        <Grid item xs={12}>
+                            <Paper elevation={3} style={{ padding: '16px', marginBottom: '16px' }}>
+                                <ModelPredict
+                                    model_uuid={trainResponse.model_uuid}
+                                    model_data={modelDataResponse}
+                                    metric_type={data.metricType}
+                                />
+                            </Paper>
+                        </Grid>
+                    </Grid>
                 </Grid>
             )}
         </Grid>
