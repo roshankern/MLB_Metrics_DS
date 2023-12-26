@@ -109,7 +109,7 @@ const ModelPredict = ({ model_uuid, model_data, metric_type }) => {
 
             {isPredicting && (
                 <Grid item xs={12}>
-                    <Typography variant="h6">Predicting...</Typography>
+                    <Typography variant="subtitle1">Predicting...</Typography>
                 </Grid>
             )}
 

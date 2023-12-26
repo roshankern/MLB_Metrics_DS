@@ -36,6 +36,14 @@ const PlayerSearch = ({ onSearchStarted, onSearchComplete }) => {
             });
             const playerSpecificMetrics = specificMetricsResponse.data;
 
+            // get model data
+            const modelDataResponse = await axios.post(`${API_ENDPOINT}model-data`, {
+                player_metrics: playerSpecificMetrics,
+                metric_type: metricType
+            });
+
+            const playerModelData = modelDataResponse.data;
+
             const playerData = {
                 firstName: firstName,
                 lastName: lastName,
@@ -43,7 +51,8 @@ const PlayerSearch = ({ onSearchStarted, onSearchComplete }) => {
                 playerId: playerId,
                 generalMetrics: playerGeneralMetrics,
                 careerTimeline: playerCareerTimeline,
-                specificMetrics: playerSpecificMetrics
+                specificMetrics: playerSpecificMetrics,
+                modelData: playerModelData
             };
 
             // Call the onSearchComplete function passed as prop with the response data

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Paper, Grid, Button, FormControl, InputLabel, MenuItem, Select, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
+import { Paper, Grid, Button, FormControl, InputLabel, MenuItem, Select, Typography, Table, TableBody, TableCell, TableContainer, TableRow } from '@mui/material';
 import axios from 'axios';
 
 import ModelPredict from './ModelPredict';
@@ -7,11 +7,7 @@ import ModelPredict from './ModelPredict';
 const MLModels = ({ data }) => {
     const [modelType, setModelType] = useState('');
     const [isTraining, setIsTraining] = useState(0);
-    const [modelDataResponse, setModelDataResponse] = useState(null);
     const [trainResponse, setTrainResponse] = useState(null);
-
-    const targetColumn = data.metricType === "pitching" ? "zone" : "description";
-    const featureColumns = Object.keys(modelDataResponse[0] || {}).filter(name => name !== targetColumn);
 
     const handleModelTypeChange = (event) => {
         setModelType(event.target.value);
@@ -24,16 +20,8 @@ const MLModels = ({ data }) => {
         try {
             console.log('Training model with Flask backend...');
 
-            // get model data
-            const modelDataResponse = await axios.post(`${API_ENDPOINT}model-data`, {
-                player_metrics: data.specificMetrics,
-                metric_type: data.metricType
-            });
-            setModelDataResponse(modelDataResponse.data);
-
-
             const modelTrainingResponse = await axios.post(`${API_ENDPOINT}tested-model`, {
-                model_data: modelDataResponse.data,
+                model_data: data.modelData,
                 target: data.metricType === "pitching" ? "zone" : "description",
                 model_type: modelType
             });
@@ -57,6 +45,9 @@ const MLModels = ({ data }) => {
     if (!data) {
         return null;
     }
+
+    const targetColumn = data.metricType === "pitching" ? "zone" : "description";
+    const featureColumns = Object.keys(data.modelData[0] || {}).filter(name => name !== targetColumn);
 
     return (
         <Grid container spacing={2}>
@@ -145,7 +136,7 @@ const MLModels = ({ data }) => {
                             <Paper elevation={3} style={{ padding: '16px', marginBottom: '16px' }}>
                                 <ModelPredict
                                     model_uuid={trainResponse.model_uuid}
-                                    model_data={modelDataResponse}
+                                    model_data={data.modelData}
                                     metric_type={data.metricType}
                                 />
                             </Paper>
