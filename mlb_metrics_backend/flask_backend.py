@@ -95,32 +95,30 @@ def get_player_specific_metrics():
         return jsonify({"error": str(e)}), 404
 
 
-def get_plate_crossing_metrics():
-    player_metrics_json = request.get_json()
-
-    if not player_metrics_json:
-        return jsonify({"error": "Missing player metrics data"}), 400
-
+@app.route("/api/v1/plate-crossing-metrics", methods=["POST"])
+def plate_crossing_metrics():
     try:
-        # Extract metric_type from JSON
-        metric_type = player_metrics_json.get("metric_type")
+        data = request.get_json()
+        player_metrics = data["player_metrics"]
+        metric_type = data["metric_type"]
+
         if metric_type not in ["pitching", "batting"]:
             return jsonify({"error": "Invalid or missing metric type"}), 400
 
-        # Convert JSON to DataFrame
-        player_metrics_df = pd.DataFrame(player_metrics_json["specific_metrics"])
+        # Convert JSON data to DataFrame
+        player_specific_metrics = pd.DataFrame(player_metrics)
 
         # Apply plate_crossing_metrics function
         plate_metrics = mlb_metrics_helpers.plate_crossing_metrics(
-            player_metrics_df, metric_type
+            player_specific_metrics, metric_type
         )
 
         # Convert DataFrame to JSON
         plate_metrics_json = plate_metrics.to_json(orient="records", date_format="iso")
         return plate_metrics_json, 200
 
-    except (ValueError, KeyError) as e:
-        return jsonify({"error": str(e)}), 404
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
 
 
 @app.route("/api/v1/model-data", methods=["POST"])
@@ -130,7 +128,6 @@ def model_data():
         data = request.get_json()
         player_metrics = data["player_metrics"]
         metric_type = data["metric_type"]
-        print(metric_type)
 
         # Convert JSON data to DataFrame
         player_specific_metrics = pd.DataFrame(player_metrics)
@@ -144,8 +141,6 @@ def model_data():
             processed_data = mlb_metrics_helpers.batter_model_data(
                 player_specific_metrics
             )
-
-        print(processed_data)
 
         # Convert processed data back to JSON
         processed_json = processed_data.to_json(orient="records", date_format="iso")

@@ -38,6 +38,13 @@ const PlayerSearch = ({ onSearchStarted, onSearchComplete }) => {
             });
             const playerSpecificMetrics = specificMetricsResponse.data;
 
+            console.log('Getting player plate crossing data...');
+            const plateCrossingResponse = await axios.post(`${API_ENDPOINT}plate-crossing-metrics`, {
+                player_metrics: playerSpecificMetrics,
+                metric_type: metricType
+            });
+            const plateCrossingData = plateCrossingResponse.data;
+
             console.log('Getting player model data...');
             const modelDataResponse = await axios.post(`${API_ENDPOINT}model-data`, {
                 player_metrics: playerSpecificMetrics,
@@ -53,6 +60,7 @@ const PlayerSearch = ({ onSearchStarted, onSearchComplete }) => {
                 generalMetrics: playerGeneralMetrics,
                 careerTimeline: playerCareerTimeline,
                 specificMetrics: playerSpecificMetrics,
+                plateCrossingMetrics: plateCrossingData,
                 modelData: playerModelData
             };
 

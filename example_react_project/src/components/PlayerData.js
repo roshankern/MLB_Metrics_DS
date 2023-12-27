@@ -3,6 +3,8 @@ import React from 'react';
 import { Grid, Paper, Typography } from '@mui/material';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
 
+import PlateScatterPlot from './PlateScatterPlot';
+
 function createMetricsTable(metricsJson) {
     const firstTenRows = metricsJson.slice(0, 5);
     const totalRows = metricsJson.length;
@@ -43,10 +45,9 @@ function formattedCareerTimeline(careerTimeline) {
 }
 
 function parseGeneralMetrics(generalMetrics, metricType) {
-    const { first_name, nickname, last_name, stats } = generalMetrics;
-    const fullName = `${first_name} "${nickname}" ${last_name}`;
+    const { stats } = generalMetrics;
 
-    let metricsInfo = fullName + '\n\n';
+    let metricsInfo = "";
 
     const metricStats = stats.find(stat => stat.group === (metricType === "pitching" ? "pitching" : "hitting"));
 
@@ -90,11 +91,10 @@ const PlayerData = ({ searching, data }) => {
                         </Paper>
                     </Grid>
                     <Grid item xs={12} md={8}>
-                        <Paper elevation={3} style={{ padding: '16px' }}>
-                            <Typography variant="h6">Scatter Plot Box</Typography>
-                            {/* Placeholder for scatter plot */}
-                            <div>Scatter Plot Goes Here</div>
-                        </Paper>
+                        <PlateScatterPlot
+                            plateCrossingMetrics={data.plateCrossingMetrics}
+                            metricType={data.metricType}
+                        />
                     </Grid>
                 </Grid>
                 <Paper elevation={3} style={{ padding: '16px' }}>
@@ -104,6 +104,7 @@ const PlayerData = ({ searching, data }) => {
                     </div>
                 </Paper>
             </div>
+
 
         );
     }
