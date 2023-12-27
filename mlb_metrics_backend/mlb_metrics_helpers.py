@@ -6,6 +6,8 @@ import statsapi
 
 import pandas as pd
 import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
 
 from sklearn.model_selection import train_test_split
 from sklearn.compose import make_column_selector as selector
@@ -135,6 +137,51 @@ def plate_crossing_metrics(
         return plate_crossing_metrics[["pitch_name", "plate_x", "plate_z"]]
     else:
         return plate_crossing_metrics[["description", "plate_x", "plate_z"]]
+
+
+def plate_crossing_scatter(
+    specific_stats: pd.DataFrame, metric_type: Literal["pitching", "batting"]
+):
+    """
+    Generates a scatter plot for plate crossing metrics for either pitching or batting.
+
+    Parameters:
+        specific_stats (pd.DataFrame): DataFrame containing player-specific stats.
+        metric_type (Literal["pitching", "batting"]): The type of metrics to plot (either "pitching" or "batting").
+
+    Returns:
+        matplotlib.figure.Figure: A matplotlib figure containing the generated scatter plot.
+    """
+
+    # Retrieve the relevant plate crossing metrics
+    if metric_type == "pitching":
+        data = plate_crossing_metrics(specific_stats, "pitching")
+        hue = "pitch_name"
+        title = "Scatter Plot of Types of Pitches Crossing Plate"
+    else:
+        data = plate_crossing_metrics(specific_stats, "batting")
+        hue = "description"
+        title = "Scatter Plot of Batting Events Crossing Plate"
+
+    # Set up the plot
+    fig, ax = plt.subplots(figsize=(8, 6))
+
+    # Create scatter plot
+    sns.scatterplot(
+        data=data, x="plate_x", y="plate_z", hue=hue, s=100, alpha=0.5, ax=ax
+    )
+
+    # Customize the axes
+    ax.axvline(x=-0.71, color="gray", linestyle="--")  # left bound of strike zone
+    ax.axvline(x=0.71, color="gray", linestyle="--")  # right bound of strike zone
+
+    # Add labels and legend
+    ax.set_title(title)
+    ax.set_xlabel("Horizontal Position (feet)")
+    ax.set_ylabel("Vertical Position (feet)")
+    ax.legend(title=hue)
+
+    return fig
 
 
 def pitcher_model_data(player_specific_metrics: pd.DataFrame) -> pd.DataFrame:

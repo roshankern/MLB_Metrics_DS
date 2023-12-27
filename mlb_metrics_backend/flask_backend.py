@@ -1,4 +1,5 @@
 import uuid
+import io
 import warnings
 
 warnings.filterwarnings("ignore")
@@ -6,9 +7,15 @@ warnings.filterwarnings("ignore")
 import mlb_metrics_helpers
 
 import pandas as pd
+import matplotlib
+
+# Use the 'Agg' backend which is non-interactive and does not require a GUI
+matplotlib.use("Agg")
+import matplotlib.pyplot as plt
 
 from flask_cors import CORS
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, send_file
+
 
 app = Flask(__name__)
 CORS(app)
@@ -146,6 +153,33 @@ def model_data():
         processed_json = processed_data.to_json(orient="records", date_format="iso")
 
         return processed_json, 200
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
+
+
+@app.route("/api/v1/generate-plot", methods=["POST"])
+def generate_plot():
+    try:
+        # Retrieve JSON data from the request
+        data = request.get_json()
+        player_metrics = data["player_metrics"]
+        metric_type = data["metric_type"]
+
+        # Convert JSON data to DataFrame
+        player_specific_metrics = pd.DataFrame(player_metrics)
+
+        # Generate the plot using the mlb_metrics_helpers function
+        fig = mlb_metrics_helpers.plate_crossing_scatter(
+            player_specific_metrics, metric_type
+        )
+
+        # Save plot to a bytes buffer
+        buf = io.BytesIO()
+        fig.savefig(buf, format="png")
+        buf.seek(0)
+
+        return send_file(buf, mimetype="image/png")
 
     except Exception as e:
         return jsonify({"error": str(e)}), 400

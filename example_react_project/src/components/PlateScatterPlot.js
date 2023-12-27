@@ -1,42 +1,43 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import { Paper, Typography } from '@mui/material';
-import Plot from 'react-plotly.js';
 
 const PlateScatterPlot = ({ plateCrossingMetrics, metricType }) => {
-    const xColumn = "plate_x";
-    const yColumn = "plate_z";
-    const hueColumn = metricType === "pitching" ? "zone" : "description";
+    const [plotUrl, setPlotUrl] = useState('');
 
-    // Define a function to map hue values to colors
-    const getColor = (hueValue) => {
-        // Define your color mapping logic here
-        // For example, different colors for different zones or descriptions
-        return 'rgba(75, 192, 192, 0.6)'; // Default color, modify as needed
-    };
+    useEffect(() => {
+        // Function to fetch plot
+        const fetchPlot = async () => {
+            try {
+                console.log('Getting plate crossing scatter plot...');
+                const response = await axios.post('http://127.0.0.1:5000/api/v1/generate-plot', {
+                    player_metrics: plateCrossingMetrics,
+                    metric_type: metricType
+                }, { responseType: 'blob' });
 
-    // Prepare the data for the scatter plot
-    const scatterData = plateCrossingMetrics.map(row => ({
-        x: [row[xColumn]],
-        y: [row[yColumn]],
-        type: 'scatter',
-        mode: 'markers',
-        marker: { color: getColor(row[hueColumn]) }, // Function to determine color based on hueColumn
-        name: row[hueColumn]
-    }));
+                // Create a local URL for the response image
+                const url = URL.createObjectURL(new Blob([response.data]));
+                setPlotUrl(url);
+            } catch (error) {
+                console.error('Error fetching plot:', error);
+            }
+        };
 
+        if (plateCrossingMetrics && metricType) {
+            fetchPlot();
+        }
+    }, [plateCrossingMetrics, metricType]);
 
     return (
-        <Paper style={{ padding: '16px', marginBottom: '16px' }}>
+        <Paper elevation={3} style={{ padding: '16px', marginBottom: '16px' }}>
             <Typography variant="h6">Plate Crossing Scatter Plot</Typography>
-            <Plot
-                data={scatterData}
-                layout={{
-                    xaxis: { title: xColumn },
-                    yaxis: { title: yColumn },
-                    showlegend: true,
-                    legend: { title: { text: hueColumn } }
-                }}
-            />
+            <div style={{ textAlign: 'center' }}>
+                {plotUrl ? (
+                    <img src={plotUrl} alt="Scatter Plot" style={{ maxWidth: '100%', height: 'auto' }} />
+                ) : (
+                    <p>Loading plot...</p>
+                )}
+            </div>
         </Paper>
     );
 };

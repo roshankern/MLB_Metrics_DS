@@ -16,6 +16,8 @@ const PlayerSearch = ({ onSearchStarted, onSearchComplete }) => {
 
         try {
 
+            console.log(`Searching for player ${lastName}, ${firstName}...`);
+
             console.log('Getting player ID...');
             const playerIdResponse = await axios.get(`${API_ENDPOINT}player-id`, {
                 params: { first_name: firstName, last_name: lastName }
