@@ -18,7 +18,7 @@ const MLModels = ({ data }) => {
         const API_ENDPOINT = "http://127.0.0.1:5000/api/v1/";
 
         try {
-            console.log('Training model with Flask backend...');
+            console.log('Training model...');
 
             const modelTrainingResponse = await axios.post(`${API_ENDPOINT}tested-model`, {
                 model_data: data.modelData,
@@ -46,14 +46,23 @@ const MLModels = ({ data }) => {
         return null;
     }
 
+
+    // Get features and classes
     const targetColumn = data.metricType === "pitching" ? "zone" : "description";
+    const uniqueTargets = Array.from(new Set(data.modelData.map(item => item[targetColumn])));
     const featureColumns = Object.keys(data.modelData[0] || {}).filter(name => name !== targetColumn);
 
+
     return (
+
         <Grid container spacing={2}>
+            <Grid item xs={12}>
+                <Typography variant="h5">Model Schema</Typography>
+            </Grid>
+
             {/* Feature Columns Table */}
             <Grid item xs={6}>
-                <Typography variant="h6">Feature Columns</Typography>
+                <Typography variant="h6">Feature columns for {data.metricType}</Typography>
                 <TableContainer component={Paper}>
                     <Table aria-label="feature columns">
                         <TableBody>
@@ -69,16 +78,29 @@ const MLModels = ({ data }) => {
 
             {/* Target Column Table */}
             <Grid item xs={6}>
-                <Typography variant="h6">Target Column</Typography>
+                <Typography variant="h6">Classes for {targetColumn}</Typography>
                 <TableContainer component={Paper}>
                     <Table aria-label="target column">
                         <TableBody>
                             <TableRow>
-                                <TableCell align="center">{targetColumn}</TableCell>
+                                {uniqueTargets.map(name => (
+                                    <TableCell key={name} align="center">{name}</TableCell>
+                                ))}
                             </TableRow>
                         </TableBody>
                     </Table>
                 </TableContainer>
+            </Grid>
+
+            <Grid item xs={12}>
+                <Typography variant="h5">Model Training</Typography>
+            </Grid>
+
+            {/* Training Button */}
+            <Grid item xs={12}>
+                <Button variant="contained" color="primary" onClick={handleTrain}>
+                    Train
+                </Button>
             </Grid>
 
             {/* Model Type Dropdown */}
@@ -98,13 +120,6 @@ const MLModels = ({ data }) => {
                         <MenuItem value="hist_gradient_boosting">Histogram Gradient Boosting</MenuItem>
                     </Select>
                 </FormControl>
-            </Grid>
-
-            {/* Training Button */}
-            <Grid item xs={12}>
-                <Button variant="contained" color="primary" onClick={handleTrain}>
-                    Train
-                </Button>
             </Grid>
 
             {/* Training Status */}

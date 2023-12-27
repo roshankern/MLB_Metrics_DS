@@ -74,49 +74,47 @@ const PlayerSearch = ({ onSearchStarted, onSearchComplete }) => {
     };
 
     return (
-        <Paper style={{ padding: '20px' }}>
-            <form onSubmit={handleSubmit}>
-                <Grid container spacing={3}>
-                    <Grid item xs={12}>
-                        <TextField
-                            label="First Name"
-                            variant="outlined"
-                            fullWidth
-                            value={firstName}
-                            onChange={(e) => setFirstName(e.target.value)}
-                        />
-                    </Grid>
-                    <Grid item xs={12}>
-                        <TextField
-                            label="Last Name"
-                            variant="outlined"
-                            fullWidth
-                            value={lastName}
-                            onChange={(e) => setLastName(e.target.value)}
-                        />
-                    </Grid>
-                    <Grid item xs={12}>
-                        <FormControl fullWidth>
-                            <InputLabel id="metric-type-label">Stat Type</InputLabel>
-                            <Select
-                                labelId="metric-type-label"
-                                value={metricType}
-                                label="Stat Type"
-                                onChange={(e) => setMetricType(e.target.value)}
-                            >
-                                <MenuItem value="pitching">Pitching</MenuItem>
-                                <MenuItem value="batting">Batting</MenuItem>
-                            </Select>
-                        </FormControl>
-                    </Grid>
-                    <Grid item xs={12}>
-                        <Button type="submit" variant="contained" color="primary" fullWidth>
-                            Search
-                        </Button>
-                    </Grid>
+        <form onSubmit={handleSubmit}>
+            <Grid container spacing={3}>
+                <Grid item xs={12}>
+                    <TextField
+                        label="First Name"
+                        variant="outlined"
+                        fullWidth
+                        value={firstName}
+                        onChange={(e) => setFirstName(e.target.value)}
+                    />
                 </Grid>
-            </form>
-        </Paper>
+                <Grid item xs={12}>
+                    <TextField
+                        label="Last Name"
+                        variant="outlined"
+                        fullWidth
+                        value={lastName}
+                        onChange={(e) => setLastName(e.target.value)}
+                    />
+                </Grid>
+                <Grid item xs={12}>
+                    <FormControl fullWidth>
+                        <InputLabel id="metric-type-label">Stat Type</InputLabel>
+                        <Select
+                            labelId="metric-type-label"
+                            value={metricType}
+                            label="Stat Type"
+                            onChange={(e) => setMetricType(e.target.value)}
+                        >
+                            <MenuItem value="pitching">Pitching</MenuItem>
+                            <MenuItem value="batting">Batting</MenuItem>
+                        </Select>
+                    </FormControl>
+                </Grid>
+                <Grid item xs={12}>
+                    <Button type="submit" variant="contained" color="primary" fullWidth>
+                        Search
+                    </Button>
+                </Grid>
+            </Grid>
+        </form>
     );
 };
 

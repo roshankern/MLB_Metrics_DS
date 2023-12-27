@@ -44,7 +44,7 @@ const ModelPredict = ({ model_uuid, model_data, metric_type }) => {
                 return acc;
             }, {});
 
-            console.log('Making prediction with Flask backend...');
+            console.log('Making model prediction...');
             const response = await axios.post(API_ENDPOINT, {
                 model_uuid: model_uuid,
                 feature_data: featureData
@@ -61,7 +61,7 @@ const ModelPredict = ({ model_uuid, model_data, metric_type }) => {
     return (
         <Grid container spacing={2}>
             <Grid item xs={12}>
-                <Typography variant="h6">Model Prediction</Typography>
+                <Typography variant="h5">Model Prediction</Typography>
             </Grid>
             <Grid item xs={12} container spacing={2}>
                 <Grid item>
