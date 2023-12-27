@@ -20,6 +20,10 @@ from flask import Flask, jsonify, request, send_file
 app = Flask(__name__)
 CORS(app)
 
+api_name = "mlb-metrics-api"
+api_version = "v1"
+api_base = f"/{api_name}/{api_version}"
+
 trained_models = {}
 
 
