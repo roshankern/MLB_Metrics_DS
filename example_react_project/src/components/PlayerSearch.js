@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { Button, FormControl, InputLabel, MenuItem, Select, TextField, Paper, Grid } from '@mui/material';
+import { Button, FormControl, InputLabel, MenuItem, Select, TextField, Grid } from '@mui/material';
 
 const PlayerSearch = ({ onSearchStarted, onSearchComplete }) => {
     const [firstName, setFirstName] = useState('');
