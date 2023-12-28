@@ -87,6 +87,7 @@ Note: You may need to change the `API_URL` in [example_react_project/src/App.js]
 
 ### Pitching Preview
 
+![Alt text](image.png)
 
 ### Batting Preview
 
