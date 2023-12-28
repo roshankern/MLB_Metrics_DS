@@ -2,12 +2,10 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { Button, FormControl, InputLabel, MenuItem, Select, TextField, Grid } from '@mui/material';
 
-const PlayerSearch = ({ onSearchStarted, onSearchComplete }) => {
+const PlayerSearch = ({ API_ENDPOINT, onSearchStarted, onSearchComplete }) => {
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
     const [metricType, setMetricType] = useState('pitching'); // Default to pitcher
-
-    const API_ENDPOINT = "http://127.0.0.1:5000/api/v1/";
 
     const handleSubmit = async (e) => {
 

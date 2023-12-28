@@ -63,7 +63,7 @@ function parseGeneralMetrics(generalMetrics, metricType) {
 
 
 
-const PlayerData = ({ searching, data }) => {
+const PlayerData = ({ API_ENDPOINT, searching, data }) => {
     if (searching) {
         return (
             <Typography variant="h5" component="h2">
@@ -92,6 +92,7 @@ const PlayerData = ({ searching, data }) => {
                     </Grid>
                     <Grid item xs={12} md={8}>
                         <PlateScatterPlot
+                            API_ENDPOINT={API_ENDPOINT}
                             plateCrossingMetrics={data.plateCrossingMetrics}
                             metricType={data.metricType}
                         />

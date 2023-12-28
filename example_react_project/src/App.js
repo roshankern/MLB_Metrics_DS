@@ -7,6 +7,11 @@ import PlayerData from './components/PlayerData';
 import MLModels from './components/MLModels';
 
 function App() {
+  const API_URL = "http://127.0.0.1:5000";
+  const API_NAME = `api`;
+  const API_VERSION = "v1";
+  const API_ENDPOINT = `${API_URL}/${API_NAME}/${API_VERSION}/`;
+
   const [searching, setSearching] = useState(false);
   const [playerSearchData, setPlayerSearchData] = useState(null);
 
@@ -24,19 +29,19 @@ function App() {
     <div className="App">
       <Paper elevation={3} style={{ padding: '16px', marginBottom: '16px' }}>
         <Typography variant="h4" style={{ marginBottom: '16px' }}>Player Search:</Typography>
-        <PlayerSearch onSearchStarted={handleSearchStarted} onSearchComplete={handleSearchComplete} />
+        <PlayerSearch API_ENDPOINT={API_ENDPOINT} onSearchStarted={handleSearchStarted} onSearchComplete={handleSearchComplete} />
       </Paper>
 
       <Paper elevation={3} style={{ padding: '16px', marginBottom: '16px' }}>
         <Typography variant="h4" style={{ marginBottom: '16px' }}>Player Data:</Typography>
-        <PlayerData searching={searching} data={playerSearchData} />
+        <PlayerData API_ENDPOINT={API_ENDPOINT} searching={searching} data={playerSearchData} />
       </Paper>
 
       <Paper elevation={3} style={{ padding: '16px', marginBottom: '16px' }}>
         <Typography variant="h4" style={{ marginBottom: '16px' }}>
           ML Models:
         </Typography>
-        <MLModels searching={searching} data={playerSearchData} />
+        <MLModels API_ENDPOINT={API_ENDPOINT} searching={searching} data={playerSearchData} />
       </Paper>
 
 

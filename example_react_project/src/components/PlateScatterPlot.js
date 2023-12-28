@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Paper, Typography } from '@mui/material';
 
-const PlateScatterPlot = ({ plateCrossingMetrics, metricType }) => {
+const PlateScatterPlot = ({ API_ENDPOINT, plateCrossingMetrics, metricType }) => {
     const [plotUrl, setPlotUrl] = useState('');
 
     useEffect(() => {
@@ -10,7 +10,7 @@ const PlateScatterPlot = ({ plateCrossingMetrics, metricType }) => {
         const fetchPlot = async () => {
             try {
                 console.log('Getting plate crossing scatter plot...');
-                const response = await axios.post('http://127.0.0.1:5000/api/v1/generate-plot', {
+                const response = await axios.post(`${API_ENDPOINT}generate-plot`, {
                     player_metrics: plateCrossingMetrics,
                     metric_type: metricType
                 }, { responseType: 'blob' });
@@ -26,7 +26,7 @@ const PlateScatterPlot = ({ plateCrossingMetrics, metricType }) => {
         if (plateCrossingMetrics && metricType) {
             fetchPlot();
         }
-    }, [plateCrossingMetrics, metricType]);
+    }, [API_ENDPOINT, plateCrossingMetrics, metricType]);
 
     return (
         <Paper elevation={3} style={{ padding: '16px', marginBottom: '16px' }}>
