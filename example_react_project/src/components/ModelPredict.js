@@ -6,6 +6,7 @@ const ModelPredict = ({ API_ENDPOINT, model_uuid, model_data, metric_type }) => 
     const [inputValues, setInputValues] = useState({});
     const [prediction, setPrediction] = useState(null);
     const [isPredicting, setIsPredicting] = useState(false);
+    const [plotImage, setPlotImage] = useState(null);
 
     if (model_data && Object.keys(inputValues).length === 0) {
         const columnNames = Object.keys(model_data[0]).filter(name => name !== metric_type);
@@ -35,6 +36,7 @@ const ModelPredict = ({ API_ENDPOINT, model_uuid, model_data, metric_type }) => 
 
     const handlePredict = async () => {
         setIsPredicting(true);
+        setPlotImage(null);
 
         try {
             // Transform inputValues into the required JSON format for the backend
@@ -49,11 +51,24 @@ const ModelPredict = ({ API_ENDPOINT, model_uuid, model_data, metric_type }) => 
                 feature_data: featureData
             });
 
+            if (response.data && response.data.prediction_probas && response.data.class_labels) {
+                // Fetch the plot image
+                const plotResponse = await axios.post(`${API_ENDPOINT}prediction-probas-bar`, {
+                    prediction_probas: response.data.prediction_probas,
+                    class_labels: response.data.class_labels
+                }, { responseType: 'blob' }); // Ensure you get the response as a blob
+
+                // Create a URL for the image
+                const plotImageUrl = URL.createObjectURL(plotResponse.data);
+                setPlotImage(plotImageUrl);
+            }
+
             setPrediction(response.data);
             setIsPredicting(false);
         } catch (error) {
             console.error('Error during prediction:', error);
             setIsPredicting(false);
+
         }
     };
 
@@ -113,9 +128,26 @@ const ModelPredict = ({ API_ENDPOINT, model_uuid, model_data, metric_type }) => 
 
             {!isPredicting && prediction && (
                 <Grid item xs={12}>
-                    <Typography variant="subtitle1">Prediction: {prediction.prediction}</Typography>
+                    <Grid container spacing={2}>
+                        {plotImage && (
+                            <Grid item xs={10}>
+                                <Paper elevation={3} style={{ padding: '16px', marginBottom: '16px' }}>
+                                    <Typography variant="h6">Prediction Probabilities</Typography>
+                                    <img src={plotImage} alt="Prediction Probabilities" style={{ maxWidth: '100%', height: 'auto' }} />
+                                </Paper>
+                            </Grid>
+                        )}
+                        <Grid item xs={2}>
+                            <Paper elevation={3} style={{ padding: '16px', marginBottom: '16px' }}>
+                                <Typography variant="h6">Prediction</Typography>
+                                <Typography>{prediction.prediction}</Typography>
+                            </Paper>
+                        </Grid>
+                    </Grid>
                 </Grid>
+
             )}
+
         </Grid>
     );
 };

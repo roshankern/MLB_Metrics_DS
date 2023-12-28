@@ -206,9 +206,9 @@ def plot_prediction_probas(prediction_probas, class_labels):
     sns.barplot(x=class_labels, y=prediction_probas, palette=palette, ax=ax)
 
     # Customize the plot
-    ax.set_xlabel("Classes")
+    ax.set_xlabel("Class")
     ax.set_ylabel("Probability")
-    ax.set_title("Prediction Probabilities")
+    ax.set_title("Model Prediction Probabilities")
     ax.set_xticklabels(class_labels)
 
     return fig

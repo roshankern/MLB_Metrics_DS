@@ -208,7 +208,6 @@ def tested_model():
     return jsonify({"model_uuid": model_uuid, "accuracy": accuracy}), 200
 
 
-# Endpoint for making predictions
 @app.route(f"{api_base}/predict", methods=["POST"])
 def predict():
     data = request.get_json()
@@ -220,11 +219,19 @@ def predict():
 
     if model_uuid in trained_models:
         model = trained_models[model_uuid]
-        prediction, prediction_probas = mlb_metrics_helpers.model_prediction(
-            model, feature_data
-        )
+        (
+            prediction,
+            prediction_probas,
+            class_labels,
+        ) = mlb_metrics_helpers.model_prediction(model, feature_data)
         return (
-            jsonify({"prediction": prediction, "prediction_probas": prediction_probas}),
+            jsonify(
+                {
+                    "prediction": prediction,
+                    "prediction_probas": prediction_probas,
+                    "class_labels": class_labels,
+                }
+            ),
             200,
         )
     else:
