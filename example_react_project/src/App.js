@@ -8,7 +8,7 @@ import MLModels from './components/MLModels';
 
 function App() {
   const API_URL = "http://127.0.0.1:5000";
-  const API_NAME = `api`;
+  const API_NAME = `mlb-metrics-api`;
   const API_VERSION = "v1";
   const API_ENDPOINT = `${API_URL}/${API_NAME}/${API_VERSION}/`;
 

@@ -81,3 +81,8 @@ cd example_react_project/
 npm start
 ```
 
+## Preview
+
+### Pitching Preview
+
+![Pitching Preview](images/pitching_preview.png)

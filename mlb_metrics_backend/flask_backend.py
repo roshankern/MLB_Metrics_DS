@@ -27,7 +27,7 @@ api_base = f"/{api_name}/{api_version}"
 trained_models = {}
 
 
-@app.route("/api/v1/player-id", methods=["GET"])
+@app.route(f"{api_base}/player-id", methods=["GET"])
 def get_player_id():
     last_name = request.args.get("last_name")
     first_name = request.args.get("first_name")
@@ -43,7 +43,7 @@ def get_player_id():
         return jsonify({"error": str(e)}), 404
 
 
-@app.route("/api/v1/player-general-metrics", methods=["GET"])
+@app.route(f"{api_base}/player-general-metrics", methods=["GET"])
 def get_player_general_metrics():
     player_id = request.args.get("player_id")
 
@@ -58,7 +58,7 @@ def get_player_general_metrics():
         return jsonify({"error": str(e)}), 404
 
 
-@app.route("/api/v1/player-career-timeline", methods=["POST"])
+@app.route(f"{api_base}/player-career-timeline", methods=["POST"])
 def get_player_career_timeline():
     player_general_metrics = request.get_json()
 
@@ -81,7 +81,7 @@ def get_player_career_timeline():
         return jsonify({"error": str(e)}), 500
 
 
-@app.route("/api/v1/player-specific-metrics", methods=["GET"])
+@app.route(f"{api_base}/player-specific-metrics", methods=["GET"])
 def get_player_specific_metrics():
     player_id = request.args.get("player_id")
     metric_type = request.args.get("metric_type")
@@ -106,7 +106,7 @@ def get_player_specific_metrics():
         return jsonify({"error": str(e)}), 404
 
 
-@app.route("/api/v1/plate-crossing-metrics", methods=["POST"])
+@app.route(f"{api_base}/plate-crossing-metrics", methods=["POST"])
 def plate_crossing_metrics():
     try:
         data = request.get_json()
@@ -132,7 +132,7 @@ def plate_crossing_metrics():
         return jsonify({"error": str(e)}), 400
 
 
-@app.route("/api/v1/model-data", methods=["POST"])
+@app.route(f"{api_base}/model-data", methods=["POST"])
 def model_data():
     try:
         # Retrieve JSON data from the request
@@ -162,7 +162,7 @@ def model_data():
         return jsonify({"error": str(e)}), 400
 
 
-@app.route("/api/v1/generate-plot", methods=["POST"])
+@app.route(f"{api_base}/generate-plot", methods=["POST"])
 def generate_plot():
     try:
         # Retrieve JSON data from the request
@@ -189,7 +189,7 @@ def generate_plot():
         return jsonify({"error": str(e)}), 400
 
 
-@app.route("/api/v1/tested-model", methods=["POST"])
+@app.route(f"{api_base}/tested-model", methods=["POST"])
 def tested_model():
     data = request.get_json()
     model_data = pd.DataFrame(data["model_data"])
@@ -209,7 +209,7 @@ def tested_model():
 
 
 # Endpoint for making predictions
-@app.route("/api/v1/predict", methods=["POST"])
+@app.route(f"{api_base}/predict", methods=["POST"])
 def predict():
     data = request.get_json()
     model_uuid = data["model_uuid"]
