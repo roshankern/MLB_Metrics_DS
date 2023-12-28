@@ -1,7 +1,7 @@
 import React from 'react';
 import { Paper, Grid, Button, FormControl, InputLabel, MenuItem, Select, Typography } from '@mui/material';
 
-const ModelTraining = ({ modelType, setModelType, isTraining, setIsTraining, trainResponse, handleTrain }) => {
+const ModelTraining = ({ modelType, setModelType, isTraining, trainResponse, handleTrain }) => {
     const handleModelTypeChange = (event) => {
         setModelType(event.target.value);
     };

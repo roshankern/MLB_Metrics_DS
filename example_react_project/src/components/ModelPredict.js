@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Button, Typography, Grid } from '@mui/material';
 import axios from 'axios';
 
-const ModelPredict = ({ model_uuid, model_data, metric_type }) => {
+const ModelPredict = ({ API_ENDPOINT, model_uuid, model_data, metric_type }) => {
     const [inputValues, setInputValues] = useState({});
     const [prediction, setPrediction] = useState(null);
     const [isPredicting, setIsPredicting] = useState(false);
@@ -35,7 +35,6 @@ const ModelPredict = ({ model_uuid, model_data, metric_type }) => {
 
     const handlePredict = async () => {
         setIsPredicting(true);
-        const API_ENDPOINT = "http://127.0.0.1:5000/api/v1/predict";
 
         try {
             // Transform inputValues into the required JSON format for the backend
@@ -45,7 +44,7 @@ const ModelPredict = ({ model_uuid, model_data, metric_type }) => {
             }, {});
 
             console.log('Making model prediction...');
-            const response = await axios.post(API_ENDPOINT, {
+            const response = await axios.post(`${API_ENDPOINT}predict`, {
                 model_uuid: model_uuid,
                 feature_data: featureData
             });

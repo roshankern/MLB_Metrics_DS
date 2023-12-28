@@ -6,14 +6,13 @@ import ModelSchema from './ModelSchema';
 import ModelTraining from './ModelTraining';
 import ModelPredict from './ModelPredict';
 
-const MLModels = ({ searching, data }) => {
+const MLModels = ({ API_ENDPOINT, searching, data }) => {
     const [modelType, setModelType] = useState('');
     const [isTraining, setIsTraining] = useState(0);
     const [trainResponse, setTrainResponse] = useState(null);
 
     const handleTrain = async () => {
         setIsTraining(1);
-        const API_ENDPOINT = "http://127.0.0.1:5000/api/v1/";
 
         try {
             console.log('Training model...');
@@ -85,6 +84,7 @@ const MLModels = ({ searching, data }) => {
                         <Grid item xs={12}>
                             <Paper elevation={3} style={{ padding: '16px', marginBottom: '16px' }}>
                                 <ModelPredict
+                                    API_ENDPOINT={API_ENDPOINT}
                                     model_uuid={trainResponse.model_uuid}
                                     model_data={data.modelData}
                                     metric_type={data.metricType}
