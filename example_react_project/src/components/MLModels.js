@@ -1,18 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { Paper, Grid, Button, FormControl, InputLabel, MenuItem, Select, Typography } from '@mui/material';
+import { Paper, Grid, Typography } from '@mui/material';
 import axios from 'axios';
 
 import ModelSchema from './ModelSchema';
+import ModelTraining from './ModelTraining';
 import ModelPredict from './ModelPredict';
 
 const MLModels = ({ searching, data }) => {
     const [modelType, setModelType] = useState('');
     const [isTraining, setIsTraining] = useState(0);
     const [trainResponse, setTrainResponse] = useState(null);
-
-    const handleModelTypeChange = (event) => {
-        setModelType(event.target.value);
-    };
 
     const handleTrain = async () => {
         setIsTraining(1);
@@ -67,60 +64,23 @@ const MLModels = ({ searching, data }) => {
             </Grid>
 
             <Grid item xs={12}>
-                <Typography variant="h5">Model Training</Typography>
+                <Paper elevation={3} style={{ padding: '16px', marginBottom: '16px' }}>
+                    <ModelTraining
+                        modelType={modelType}
+                        setModelType={setModelType}
+                        isTraining={isTraining}
+                        setIsTraining={setIsTraining}
+                        trainResponse={trainResponse}
+                        handleTrain={handleTrain}
+                    />
+                </Paper>
             </Grid>
 
-            {/* Training Button */}
-            <Grid item xs={12}>
-                <Button variant="contained" color="primary" onClick={handleTrain}>
-                    Train
-                </Button>
-            </Grid>
 
-            {/* Model Type Dropdown */}
-            <Grid item xs={12}>
-                <FormControl fullWidth>
-                    <InputLabel id="model-type-label">Model Type</InputLabel>
-                    <Select
-                        labelId="model-type-label"
-                        id="model-type"
-                        value={modelType}
-                        label="Model Type"
-                        onChange={handleModelTypeChange}
-                    >
-                        <MenuItem value="logistic_regression">Logistic Regression</MenuItem>
-                        <MenuItem value="random_forest">Random Forest</MenuItem>
-                        <MenuItem value="gradient_boosting">Gradient Boosting</MenuItem>
-                        <MenuItem value="hist_gradient_boosting">Histogram Gradient Boosting</MenuItem>
-                        <MenuItem value="svc">Support Vector Classification</MenuItem>
-                    </Select>
-                </FormControl>
-            </Grid>
-
-            {/* Training Status */}
-            {isTraining === 1 && (
-                <Grid item xs={12}>
-                    <Typography variant="h6">Training...</Typography>
-                </Grid>
-            )}
 
             {/* Training Results and Model Predict Component */}
             {isTraining === 2 && trainResponse && (
                 <Grid item xs={12}>
-                    <Grid container spacing={2}>
-                        <Grid item xs={6}>
-                            <Paper elevation={3} style={{ padding: '16px', marginBottom: '16px' }}>
-                                <Typography variant="h6">Model Accuracy</Typography>
-                                <Typography>{trainResponse.accuracy}</Typography>
-                            </Paper>
-                        </Grid>
-                        <Grid item xs={6}>
-                            <Paper elevation={3} style={{ padding: '16px', marginBottom: '16px' }}>
-                                <Typography variant="h6">Model UUID</Typography>
-                                <Typography>{trainResponse.model_uuid}</Typography>
-                            </Paper>
-                        </Grid>
-                    </Grid>
                     <Grid container spacing={2}>
                         <Grid item xs={12}>
                             <Paper elevation={3} style={{ padding: '16px', marginBottom: '16px' }}>
