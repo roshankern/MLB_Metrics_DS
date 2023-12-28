@@ -185,6 +185,35 @@ def plate_crossing_scatter(
     return fig
 
 
+def plot_prediction_probas(prediction_probas, class_labels):
+    """
+    Creates a bar plot of prediction probabilities using Seaborn and returns the Matplotlib figure.
+
+    Parameters:
+        prediction_probas (list): List of prediction probabilities.
+        class_labels (list): List of class labels corresponding to the probabilities.
+
+    Returns:
+        matplotlib.figure.Figure: A matplotlib figure containing the generated bar plot.
+    """
+    # Create a color palette with the same number of colors as there are classes
+    palette = sns.color_palette("tab10")
+
+    # Create a Matplotlib figure and axes
+    fig, ax = plt.subplots(figsize=(8, 6))
+
+    # Create a Seaborn barplot on the created axes
+    sns.barplot(x=class_labels, y=prediction_probas, palette=palette, ax=ax)
+
+    # Customize the plot
+    ax.set_xlabel("Classes")
+    ax.set_ylabel("Probability")
+    ax.set_title("Prediction Probabilities")
+    ax.set_xticklabels(class_labels)
+
+    return fig
+
+
 def pitcher_model_data(player_specific_metrics: pd.DataFrame) -> pd.DataFrame:
     """
     Processes player-specific metrics for model training.
@@ -388,7 +417,7 @@ def tested_model(
     return (model, accuracy)
 
 
-def model_prediction(model: Pipeline, sample_X: pd.DataFrame) -> (object, list):
+def model_prediction(model: Pipeline, sample_X: pd.DataFrame) -> (str, list, list):
     """
     Makes predictions using the trained model on the provided sample data.
 
@@ -398,8 +427,9 @@ def model_prediction(model: Pipeline, sample_X: pd.DataFrame) -> (object, list):
 
     Returns:
         Tuple containing:
-        - str: Predicted class label
+        - str: Predicted class label.
         - list: Prediction probabilities for each class.
+        - list: Class labels used by the model.
     """
     prediction = model.predict(sample_X)[0]
     prediction = str(prediction)
@@ -407,4 +437,7 @@ def model_prediction(model: Pipeline, sample_X: pd.DataFrame) -> (object, list):
     prediction_probas = model.predict_proba(sample_X)[0].tolist()
     prediction_probas = [float(x) for x in prediction_probas]
 
-    return prediction, prediction_probas
+    # Retrieve class labels
+    class_labels = model.classes_.tolist()
+
+    return prediction, prediction_probas, class_labels

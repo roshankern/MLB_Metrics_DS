@@ -162,8 +162,8 @@ def model_data():
         return jsonify({"error": str(e)}), 400
 
 
-@app.route(f"{api_base}/generate-plot", methods=["POST"])
-def generate_plot():
+@app.route(f"{api_base}/plate-crossing-scatter", methods=["POST"])
+def plate_crossing_scatter():
     try:
         # Retrieve JSON data from the request
         data = request.get_json()
@@ -229,6 +229,30 @@ def predict():
         )
     else:
         return jsonify({"error": "Model not found"}), 404
+
+
+@app.route(f"{api_base}/prediction-probas-bar", methods=["POST"])
+def prediction_probas_bar():
+    try:
+        # Retrieve JSON data from the request
+        data = request.get_json()
+        prediction_probas = data["prediction_probas"]
+        class_labels = data["class_labels"]
+
+        # Generate the plot using the helper function
+        fig = mlb_metrics_helpers.plot_prediction_probas(
+            prediction_probas, class_labels
+        )
+
+        # Save plot to a bytes buffer
+        buf = io.BytesIO()
+        fig.savefig(buf, format="png", bbox_inches="tight")
+        buf.seek(0)
+
+        return send_file(buf, mimetype="image/png")
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
 
 
 if __name__ == "__main__":

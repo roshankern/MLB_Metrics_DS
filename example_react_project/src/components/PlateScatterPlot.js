@@ -10,7 +10,7 @@ const PlateScatterPlot = ({ API_ENDPOINT, plateCrossingMetrics, metricType }) =>
         const fetchPlot = async () => {
             try {
                 console.log('Getting plate crossing scatter plot...');
-                const response = await axios.post(`${API_ENDPOINT}generate-plot`, {
+                const response = await axios.post(`${API_ENDPOINT}plate-crossing-scatter`, {
                     player_metrics: plateCrossingMetrics,
                     metric_type: metricType
                 }, { responseType: 'blob' });

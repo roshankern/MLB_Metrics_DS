@@ -57,7 +57,7 @@ conda activate mlb_metrics_backend
 ```sh
 python mlb_metrics_backend/flask_backend.py
 ```
-2) Note where Flask app is running (ex `http://127.0.0.1:5000`)
+2) Note url where Flask app is running (ex `http://127.0.0.1:5000`)
 
 ### Step 2: Run React Project
 
@@ -80,6 +80,8 @@ Start React project with
 cd example_react_project/
 npm start
 ```
+
+Note: You may need to change the `API_URL` in [example_react_project/src/App.js](example_react_project/src/App.js) to reflect the url where Flask app is running (from step 1b).
 
 ## Preview
 
