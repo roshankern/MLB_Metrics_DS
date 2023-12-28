@@ -36,7 +36,7 @@ function App() {
         <Typography variant="h4" style={{ marginBottom: '16px' }}>
           ML Models:
         </Typography>
-        <MLModels data={playerSearchData} />
+        <MLModels searching={searching} data={playerSearchData} />
       </Paper>
 
 

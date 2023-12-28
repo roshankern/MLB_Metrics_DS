@@ -32,7 +32,7 @@ The React frontend at [example_react_project/src](example_react_project/src) has
     - Plate Crossing Scatter Plot
 - Developing and testing machine learning models:
     - model schema (depends on metric type)
-    - model training (choose from 4 sklearn models)
+    - model training (choose from 5 sklearn models)
     - model predictions (given pitch data)
 
 ## Usage

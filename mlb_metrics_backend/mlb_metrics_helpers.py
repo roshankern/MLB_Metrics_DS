@@ -14,6 +14,7 @@ from sklearn.compose import make_column_selector as selector
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
 from sklearn.compose import ColumnTransformer
 from sklearn.linear_model import LogisticRegression
+from sklearn.svm import SVC
 from sklearn.ensemble import (
     RandomForestClassifier,
     GradientBoostingClassifier,
@@ -341,6 +342,7 @@ def tested_model(
         "random_forest",
         "gradient_boosting",
         "hist_gradient_boosting",
+        "svc",
     ],
 ) -> tuple[Pipeline, float]:
     """
@@ -354,6 +356,7 @@ def tested_model(
             - "random_forest"
             - "gradient_boosting"
             - "hist_gradient_boosting"
+            - "svc"
 
     Returns:
         tuple[Pipeline, float]: A tuple containing the trained model pipeline and the accuracy score.
@@ -370,6 +373,8 @@ def tested_model(
         model_type = GradientBoostingClassifier(random_state=0)
     elif sklearn_model_type == "hist_gradient_boosting":
         model_type = HistGradientBoostingClassifier(random_state=0)
+    elif sklearn_model_type == "svc":
+        model_type = SVC(random_state=0, probability=True)
     else:
         raise ValueError(
             "Invalid sklearn_model_type. Please choose a valid model type."

@@ -4,7 +4,7 @@ import axios from 'axios';
 
 import ModelPredict from './ModelPredict';
 
-const MLModels = ({ data }) => {
+const MLModels = ({ searching, data }) => {
     const [modelType, setModelType] = useState('');
     const [isTraining, setIsTraining] = useState(0);
     const [trainResponse, setTrainResponse] = useState(null);
@@ -41,9 +41,17 @@ const MLModels = ({ data }) => {
         }
     }, [data]);
 
+    if (searching) {
+        return (
+            <Typography variant="h5" component="h2">
+                Loading...
+            </Typography>
+        );
+    }
+
 
     if (!data) {
-        return null;
+        return null
     }
 
 
@@ -118,6 +126,7 @@ const MLModels = ({ data }) => {
                         <MenuItem value="random_forest">Random Forest</MenuItem>
                         <MenuItem value="gradient_boosting">Gradient Boosting</MenuItem>
                         <MenuItem value="hist_gradient_boosting">Histogram Gradient Boosting</MenuItem>
+                        <MenuItem value="svc">Support Vector Classification</MenuItem>
                     </Select>
                 </FormControl>
             </Grid>
